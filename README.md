@@ -72,7 +72,7 @@ CyberQuest supports a physical NPC hand-in objective:
 {
   "id": "gift",
   "type": "deliver_item",
-  "target": "cybercontent:choso_plush",
+  "target": "cybernpc:choso_plush",
   "npc": "mason",
   "count": 1,
   "consume": true,
@@ -82,8 +82,3 @@ CyberQuest supports a physical NPC hand-in objective:
 
 The player must hold the matching item in their main hand and interact with the matching CyberQuest NPC ID. Survival hand-ins consume the item; creative-mode hand-ins preserve it.
 
-## CyberContent
-
-This repository also builds a separate `CyberContent.jar` containing client-visible Season 2 content. CyberContent is a separate mod ID and JAR even though its source currently lives beside CyberQuest.
-
-Its first item is `cybercontent:choso_plush`, an original 3D voxel-plush model with no MyTotemDoll runtime dependency.
