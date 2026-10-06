@@ -62,3 +62,28 @@ CyberQuest does not depend on CyberServer, but when CyberServer is installed a q
 CyberServer's quest reward multiplier scales Cyber XP and vanilla XP rewards. Item rewards are deliberately not multiplied so unique quest items are never duplicated.
 
 A CyberNpc may also use only a stable `CyberQuestNpcId` while CyberServer owns the Season 2 quest bindings for that ID. Local per-entity CyberQuest bindings continue to work and are merged with server bindings.
+
+
+## Delivering quest items
+
+CyberQuest supports a physical NPC hand-in objective:
+
+```json
+{
+  "id": "gift",
+  "type": "deliver_item",
+  "target": "cybercontent:choso_plush",
+  "npc": "mason",
+  "count": 1,
+  "consume": true,
+  "description": "Hand Mason the Choso Plush"
+}
+```
+
+The player must hold the matching item in their main hand and interact with the matching CyberQuest NPC ID. Survival hand-ins consume the item; creative-mode hand-ins preserve it.
+
+## CyberContent
+
+This repository also builds a separate `CyberContent.jar` containing client-visible Season 2 content. CyberContent is a separate mod ID and JAR even though its source currently lives beside CyberQuest.
+
+Its first item is `cybercontent:choso_plush`, an original 3D voxel-plush model with no MyTotemDoll runtime dependency.

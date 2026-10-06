@@ -6,6 +6,7 @@ public enum QuestObjectiveType {
     KILL,
     COLLECT,
     TALK,
+    DELIVER_ITEM,
     VISIT,
     ADVANCEMENT;
 

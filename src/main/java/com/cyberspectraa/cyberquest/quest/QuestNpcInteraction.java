@@ -68,6 +68,10 @@ public final class QuestNpcInteraction {
                     player,
                     questId
                 )) {
+                QuestManager.tryDeliverItems(
+                    player,
+                    npcId
+                );
                 QuestManager.refreshDynamicObjectives(player);
 
                 if (QuestManager.isReadyToTurnIn(

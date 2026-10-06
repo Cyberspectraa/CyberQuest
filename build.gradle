@@ -47,6 +47,21 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+sourceSets {
+    cybercontent {
+        java.srcDir 'cybercontent/src/main/java'
+        resources.srcDir 'cybercontent/src/main/resources'
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += output + compileClasspath + sourceSets.main.runtimeClasspath
+    }
+}
+
+configurations {
+    cybercontentImplementation.extendsFrom implementation
+    cybercontentCompileOnly.extendsFrom compileOnly
+    cybercontentRuntimeOnly.extendsFrom runtimeOnly
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 }
@@ -89,6 +104,36 @@ tasks.named('jar', Jar).configure {
     }
 
     finalizedBy 'reobfJar'
+}
+
+tasks.register('cyberContentJar', Jar) {
+    dependsOn tasks.named('cybercontentClasses')
+    from sourceSets.cybercontent.output
+    archiveFileName = "CyberContent-0.1.0-alpha.1-forge-${minecraft_version}.jar"
+
+    manifest {
+        attributes([
+                'Specification-Title'     : 'cybercontent',
+                'Specification-Vendor'    : 'Cyberspectraa',
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : 'CyberContent',
+                'Implementation-Version'  : '0.1.0-alpha.1',
+                'Implementation-Vendor'   : 'Cyberspectraa',
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+reobf {
+    cyberContentJar {}
+}
+
+tasks.named('cyberContentJar').configure {
+    finalizedBy 'reobfCyberContentJar'
+}
+
+tasks.named('build').configure {
+    dependsOn tasks.named('cyberContentJar')
 }
 
 tasks.withType(JavaCompile).configureEach {

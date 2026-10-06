@@ -260,6 +260,123 @@ public final class QuestManager {
         );
     }
 
+    public static boolean tryDeliverItems(
+        ServerPlayer player,
+        String npcId
+    ) {
+        if (player == null
+                || npcId == null
+                || npcId.isBlank()) {
+            return false;
+        }
+
+        ItemStack held = player.getMainHandItem();
+
+        if (held.isEmpty()) {
+            return false;
+        }
+
+        ResourceLocation heldId =
+            ForgeRegistries.ITEMS.getKey(
+                held.getItem()
+            );
+
+        if (heldId == null) {
+            return false;
+        }
+
+        boolean changed = false;
+        String normalizedNpc =
+            npcId.trim().toLowerCase();
+
+        List<ResourceLocation> active =
+            new ArrayList<>(
+                PlayerQuestData.activeIds(player)
+            );
+
+        for (ResourceLocation questId : active) {
+            QuestDefinition quest =
+                QuestRegistry.get(questId).orElse(null);
+
+            if (quest == null) {
+                continue;
+            }
+
+            for (QuestObjectiveDefinition objective
+                    : quest.objectives()) {
+                if (objective.type()
+                        != QuestObjectiveType.DELIVER_ITEM
+                        || !npcMatches(
+                            objective.npc(),
+                            normalizedNpc
+                        )
+                        || !targetMatches(
+                            objective.target(),
+                            heldId.toString()
+                        )) {
+                    continue;
+                }
+
+                int current = PlayerQuestData.progress(
+                    player,
+                    questId,
+                    objective.id()
+                );
+                int remaining = Math.max(
+                    0,
+                    objective.count() - current
+                );
+
+                if (remaining <= 0) {
+                    continue;
+                }
+
+                int delivered = Math.min(
+                    remaining,
+                    held.getCount()
+                );
+
+                if (delivered <= 0) {
+                    continue;
+                }
+
+                if (objective.consume()
+                        && !player.getAbilities()
+                            .instabuild) {
+                    held.shrink(delivered);
+                }
+
+                changed |= PlayerQuestData.addProgress(
+                    player,
+                    questId,
+                    objective.id(),
+                    delivered,
+                    objective.count()
+                );
+
+                player.displayClientMessage(
+                    Component.literal(
+                        "Delivered "
+                            + delivered + " × "
+                            + heldId
+                            + " to " + normalizedNpc
+                    ).withStyle(ChatFormatting.GREEN),
+                    true
+                );
+
+                if (held.isEmpty()) {
+                    break;
+                }
+            }
+        }
+
+        if (changed) {
+            QuestNetwork.syncJournal(player, false);
+        }
+
+        return changed;
+    }
+
     public static void recordAdvancement(
         ServerPlayer player,
         ResourceLocation advancementId
@@ -448,6 +565,16 @@ public final class QuestManager {
         }
 
         return expected.equalsIgnoreCase(actual);
+    }
+
+    private static boolean npcMatches(
+        String expected,
+        String actual
+    ) {
+        return expected == null
+            || expected.isBlank()
+            || "*".equals(expected)
+            || expected.equalsIgnoreCase(actual);
     }
 
     private static boolean matches(

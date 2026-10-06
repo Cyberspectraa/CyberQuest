@@ -8,6 +8,8 @@ public record QuestObjectiveDefinition(
     String description,
     String target,
     int count,
+    String npc,
+    boolean consume,
     String dimension,
     double x,
     double y,
@@ -24,6 +26,7 @@ public record QuestObjectiveDefinition(
         description = description == null ? "" : description;
         target = target == null ? "" : target;
         count = Math.max(1, count);
+        npc = npc == null ? "" : npc.trim().toLowerCase();
         dimension = dimension == null ? "" : dimension;
         radius = Math.max(0.5D, radius);
     }
@@ -36,6 +39,8 @@ public record QuestObjectiveDefinition(
         String description = string(json, "description", "");
         String target = string(json, "target", "");
         int count = integer(json, "count", 1);
+        String npc = string(json, "npc", "");
+        boolean consume = bool(json, "consume", true);
         String dimension = string(json, "dimension", "");
         double x = decimal(json, "x", 0.0D);
         double y = decimal(json, "y", 0.0D);
@@ -48,6 +53,8 @@ public record QuestObjectiveDefinition(
             description,
             target,
             count,
+            npc,
+            consume,
             dimension,
             x,
             y,
@@ -65,6 +72,9 @@ public record QuestObjectiveDefinition(
             case KILL -> "Defeat " + count + " " + target;
             case COLLECT -> "Collect " + count + " " + target;
             case TALK -> "Talk to " + target;
+            case DELIVER_ITEM ->
+                "Deliver " + count + " " + target
+                    + (npc.isBlank() ? "" : " to " + npc);
             case VISIT -> "Visit the marked location";
             case ADVANCEMENT -> "Earn advancement " + target;
         };
@@ -87,6 +97,16 @@ public record QuestObjectiveDefinition(
     ) {
         return json.has(key) && json.get(key).isJsonPrimitive()
             ? json.get(key).getAsInt()
+            : fallback;
+    }
+
+    private static boolean bool(
+        JsonObject json,
+        String key,
+        boolean fallback
+    ) {
+        return json.has(key) && json.get(key).isJsonPrimitive()
+            ? json.get(key).getAsBoolean()
             : fallback;
     }
 
