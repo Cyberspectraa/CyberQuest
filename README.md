@@ -45,3 +45,20 @@ Right-clicking the bound NPC accepts the first available quest, shows progress w
 /cyberquest reset @s cyberquest:first_hunt
 /cyberquest resetall @s
 ```
+
+
+## CyberServer world-state gates
+
+CyberQuest does not depend on CyberServer, but when CyberServer is installed a quest may optionally use server-owned progression gates:
+
+```json
+{
+  "min_story_act": 2,
+  "required_world_flags": ["magic_awakened"],
+  "required_unlocked_regions": ["capital"]
+}
+```
+
+CyberServer's quest reward multiplier scales Cyber XP and vanilla XP rewards. Item rewards are deliberately not multiplied so unique quest items are never duplicated.
+
+A CyberNpc may also use only a stable `CyberQuestNpcId` while CyberServer owns the Season 2 quest bindings for that ID. Local per-entity CyberQuest bindings continue to work and are merged with server bindings.

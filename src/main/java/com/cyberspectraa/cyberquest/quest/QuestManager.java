@@ -2,6 +2,7 @@ package com.cyberspectraa.cyberquest.quest;
 
 import com.cyberspectraa.cyberquest.compat.CyberIdentityCompat;
 import com.cyberspectraa.cyberquest.compat.CyberProgressionCompat;
+import com.cyberspectraa.cyberquest.compat.CyberServerWorldStateCompat;
 import com.cyberspectraa.cyberquest.network.QuestNetwork;
 import com.cyberspectraa.cyberquest.player.PlayerQuestData;
 import net.minecraft.ChatFormatting;
@@ -55,6 +56,32 @@ public final class QuestManager {
         if (CyberProgressionCompat.getLevel(player)
                 < quest.minCyberLevel()) {
             return false;
+        }
+
+        if (CyberServerWorldStateCompat.storyAct(
+                player.getServer()
+            ) < quest.minStoryAct()) {
+            return false;
+        }
+
+        for (String flag : quest.requiredWorldFlags()) {
+            if (!CyberServerWorldStateCompat.flag(
+                    player.getServer(),
+                    flag
+                )) {
+                return false;
+            }
+        }
+
+        for (String region
+                : quest.requiredUnlockedRegions()) {
+            if (!CyberServerWorldStateCompat
+                    .regionUnlocked(
+                        player.getServer(),
+                        region
+                    )) {
+                return false;
+            }
         }
 
         if (!matches(
@@ -500,16 +527,38 @@ public final class QuestManager {
         ServerPlayer player,
         QuestReward reward
     ) {
-        if (reward.vanillaXp() > 0) {
-            player.giveExperiencePoints(
-                reward.vanillaXp()
+        double multiplier =
+            CyberServerWorldStateCompat.rewardMultiplier(
+                player.getServer()
             );
+
+        int vanillaXp = (int) Math.min(
+            Integer.MAX_VALUE,
+            Math.max(
+                0L,
+                Math.round(
+                    reward.vanillaXp()
+                        * multiplier
+                )
+            )
+        );
+
+        long cyberXp = Math.max(
+            0L,
+            Math.round(
+                reward.cyberXp()
+                    * multiplier
+            )
+        );
+
+        if (vanillaXp > 0) {
+            player.giveExperiencePoints(vanillaXp);
         }
 
-        if (reward.cyberXp() > 0L) {
+        if (cyberXp > 0L) {
             CyberProgressionCompat.addExperience(
                 player,
-                reward.cyberXp()
+                cyberXp
             );
         }
 

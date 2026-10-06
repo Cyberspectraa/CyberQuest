@@ -1,6 +1,7 @@
 package com.cyberspectraa.cyberquest.quest;
 
 import com.cyberspectraa.cyberquest.compat.CyberNpcQuestCompat;
+import com.cyberspectraa.cyberquest.compat.CyberServerWorldStateCompat;
 import com.cyberspectraa.cyberquest.player.PlayerQuestData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -8,7 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class QuestNpcInteraction {
     private QuestNpcInteraction() {
@@ -28,8 +32,29 @@ public final class QuestNpcInteraction {
             QuestManager.recordTalk(player, npcId);
         }
 
+        Set<ResourceLocation> mergedBindings =
+            new LinkedHashSet<>(
+                CyberNpcQuestCompat.bindings(npc)
+            );
+
+        if (!npcId.isBlank()) {
+            for (String value
+                    : CyberServerWorldStateCompat
+                        .questBindings(
+                            player.getServer(),
+                            npcId
+                        )) {
+                ResourceLocation id =
+                    ResourceLocation.tryParse(value);
+
+                if (id != null) {
+                    mergedBindings.add(id);
+                }
+            }
+        }
+
         List<ResourceLocation> bindings =
-            CyberNpcQuestCompat.bindings(npc);
+            new ArrayList<>(mergedBindings);
 
         for (ResourceLocation questId : bindings) {
             QuestDefinition quest =
