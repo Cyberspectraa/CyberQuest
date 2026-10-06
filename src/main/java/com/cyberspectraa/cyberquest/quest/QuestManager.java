@@ -174,8 +174,6 @@ public final class QuestManager {
             return false;
         }
 
-        refreshDynamicObjectives(player);
-
         if (!force && !isReadyToTurnIn(player, quest)) {
             return false;
         }
@@ -528,9 +526,7 @@ public final class QuestManager {
             int remaining = itemReward.count();
             int maxStack = Math.max(
                 1,
-                item.getMaxStackSize(
-                    new ItemStack(item)
-                )
+                new ItemStack(item).getMaxStackSize()
             );
 
             while (remaining > 0) {
