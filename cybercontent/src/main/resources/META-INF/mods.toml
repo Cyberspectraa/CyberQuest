@@ -4,7 +4,7 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="cybercontent"
-version="0.1.0-alpha.1"
+version="0.1.0-alpha.2"
 displayName="CyberContent"
 authors="Cyberspectraa"
 displayTest="MATCH_VERSION"

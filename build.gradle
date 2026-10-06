@@ -109,7 +109,7 @@ tasks.named('jar', Jar).configure {
 tasks.register('cyberContentJar', Jar) {
     dependsOn tasks.named('cybercontentClasses')
     from sourceSets.cybercontent.output
-    archiveFileName = "CyberContent-0.1.0-alpha.1-forge-${minecraft_version}.jar"
+    archiveFileName = "CyberContent-0.1.0-alpha.2-forge-${minecraft_version}.jar"
 
     manifest {
         attributes([
@@ -117,7 +117,7 @@ tasks.register('cyberContentJar', Jar) {
                 'Specification-Vendor'    : 'Cyberspectraa',
                 'Specification-Version'   : '1',
                 'Implementation-Title'    : 'CyberContent',
-                'Implementation-Version'  : '0.1.0-alpha.1',
+                'Implementation-Version'  : '0.1.0-alpha.2',
                 'Implementation-Vendor'   : 'Cyberspectraa',
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
