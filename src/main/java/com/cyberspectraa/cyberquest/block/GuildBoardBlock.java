@@ -207,16 +207,32 @@ public final class GuildBoardBlock extends Block {
         boolean movedByPiston
     ) {
         if (!level.isClientSide && !newState.is(this)) {
-            removeOtherParts(
-                level,
+            Direction facing =
+                state.getValue(FACING);
+            GuildBoardPart part =
+                state.getValue(PART);
+            BlockPos master =
                 masterPosition(
                     pos,
-                    state.getValue(FACING),
-                    state.getValue(PART)
-                ),
-                state.getValue(FACING),
-                pos
-            );
+                    facing,
+                    part
+                );
+
+            if (part.isMaster()) {
+                removeOtherParts(
+                    level,
+                    master,
+                    facing,
+                    pos
+                );
+            } else if (level.getBlockState(master)
+                    .is(this)) {
+                level.setBlock(
+                    master,
+                    Blocks.AIR.defaultBlockState(),
+                    35
+                );
+            }
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
