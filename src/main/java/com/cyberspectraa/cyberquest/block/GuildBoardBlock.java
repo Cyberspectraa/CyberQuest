@@ -252,12 +252,26 @@ public final class GuildBoardBlock extends Block {
                 facing,
                 state.getValue(PART)
             );
+            BlockState masterState =
+                level.getBlockState(master);
 
-            level.setBlock(
-                master,
-                Blocks.AIR.defaultBlockState(),
-                35
-            );
+            if (masterState.is(this)
+                    && masterState.getValue(PART)
+                        .isMaster()) {
+                popResource(
+                    level,
+                    master,
+                    new ItemStack(
+                        ModItems.GUILD_BOARD.get()
+                    )
+                );
+
+                level.setBlock(
+                    master,
+                    Blocks.AIR.defaultBlockState(),
+                    35
+                );
+            }
         }
     }
 
