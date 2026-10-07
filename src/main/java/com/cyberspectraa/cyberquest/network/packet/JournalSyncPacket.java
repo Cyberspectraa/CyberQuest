@@ -53,23 +53,41 @@ public record JournalSyncPacket(
         List<JournalEntry> entries = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
+            String id = buffer.readUtf(128);
+            String title = buffer.readUtf(256);
+            String description = buffer.readUtf(2048);
+            String category = buffer.readUtf(64);
+            String section = buffer.readUtf(32);
+            String status = buffer.readUtf(32);
+            String currentLead = buffer.readUtf(1024);
+            String timer = buffer.readUtf(128);
+            String stageTitle = buffer.readUtf(256);
+            int stageNumber = Math.max(0, buffer.readVarInt());
+            int stageCount = Math.max(0, buffer.readVarInt());
+            String completionText = buffer.readUtf(2048);
+            boolean tracked = buffer.readBoolean();
+            List<String> notes =
+                readStrings(buffer, 128, 1024);
+            List<String> objectives =
+                readStrings(buffer, 128, 512);
+
             entries.add(
                 new JournalEntry(
-                    buffer.readUtf(128),
-                    buffer.readUtf(256),
-                    buffer.readUtf(2048),
-                    buffer.readUtf(64),
-                    buffer.readUtf(32),
-                    buffer.readUtf(32),
-                    buffer.readUtf(1024),
-                    buffer.readUtf(128),
-                    buffer.readUtf(256),
-                    Math.max(0, buffer.readVarInt()),
-                    Math.max(0, buffer.readVarInt()),
-                    buffer.readUtf(2048),
-                    readStrings(buffer, 128, 1024),
-                    readStrings(buffer, 128, 512),
-                    buffer.readBoolean()
+                    id,
+                    title,
+                    description,
+                    category,
+                    section,
+                    status,
+                    currentLead,
+                    timer,
+                    stageTitle,
+                    stageNumber,
+                    stageCount,
+                    completionText,
+                    notes,
+                    objectives,
+                    tracked
                 )
             );
         }
