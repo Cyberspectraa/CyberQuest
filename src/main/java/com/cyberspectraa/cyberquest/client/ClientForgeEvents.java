@@ -5,6 +5,9 @@ import com.cyberspectraa.cyberquest.network.QuestNetwork;
 import com.cyberspectraa.cyberquest.network.packet.RequestJournalPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -39,5 +42,24 @@ public final class ClientForgeEvents {
                 new RequestJournalPacket()
             );
         }
+    }
+
+    @SubscribeEvent
+    public static void onRenderOverlay(
+        RenderGuiOverlayEvent.Post event
+    ) {
+        if (event.getOverlay()
+                == VanillaGuiOverlay.HOTBAR.type()) {
+            QuestHudOverlay.render(
+                event.getGuiGraphics()
+            );
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLogout(
+        ClientPlayerNetworkEvent.LoggingOut event
+    ) {
+        ClientJournalState.clear();
     }
 }

@@ -10,14 +10,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public final class QuestManager {
     private QuestManager() {
@@ -147,12 +145,13 @@ public final class QuestManager {
         refreshDynamicObjectives(player);
 
         player.sendSystemMessage(
-            Component.literal("Quest Started: ")
-                .withStyle(ChatFormatting.GOLD)
-                .append(
-                    Component.literal(quest.title())
-                        .withStyle(ChatFormatting.YELLOW)
-                )
+            Component.literal(
+                "Journal updated: "
+            ).withStyle(ChatFormatting.GOLD)
+            .append(
+                Component.literal(quest.title())
+                    .withStyle(ChatFormatting.YELLOW)
+            )
         );
 
         QuestNetwork.syncJournal(player, false);
@@ -171,18 +170,17 @@ public final class QuestManager {
             return false;
         }
 
-        for (QuestObjectiveDefinition objective
-                : quest.objectives()) {
-            if (PlayerQuestData.progress(
-                    player,
-                    quest.id(),
-                    objective.id()
-                ) < objective.count()) {
-                return false;
-            }
+        int stageIndex =
+            PlayerQuestData.stageIndex(
+                player,
+                quest.id()
+            );
+
+        if (stageIndex < quest.stages().size() - 1) {
+            return false;
         }
 
-        return true;
+        return currentStageComplete(player, quest);
     }
 
     public static boolean turnIn(
@@ -211,12 +209,13 @@ public final class QuestManager {
         grantRewards(player, quest.reward());
 
         player.sendSystemMessage(
-            Component.literal("Quest Complete: ")
-                .withStyle(ChatFormatting.GREEN)
-                .append(
-                    Component.literal(quest.title())
-                        .withStyle(ChatFormatting.YELLOW)
-                )
+            Component.literal(
+                "Thread resolved: "
+            ).withStyle(ChatFormatting.GOLD)
+            .append(
+                Component.literal(quest.title())
+                    .withStyle(ChatFormatting.YELLOW)
+            )
         );
 
         QuestNetwork.syncJournal(player, false);
@@ -302,8 +301,10 @@ public final class QuestManager {
                 continue;
             }
 
+            boolean questChanged = false;
+
             for (QuestObjectiveDefinition objective
-                    : quest.objectives()) {
+                    : currentObjectives(player, quest)) {
                 if (objective.type()
                         != QuestObjectiveType.DELIVER_ITEM
                         || !npcMatches(
@@ -346,7 +347,7 @@ public final class QuestManager {
                     held.shrink(delivered);
                 }
 
-                changed |= PlayerQuestData.addProgress(
+                questChanged |= PlayerQuestData.addProgress(
                     player,
                     questId,
                     objective.id(),
@@ -367,6 +368,23 @@ public final class QuestManager {
                 if (held.isEmpty()) {
                     break;
                 }
+            }
+
+            if (questChanged) {
+                questChanged |= advanceStagesIfReady(
+                    player,
+                    quest
+                );
+                changed = true;
+            }
+
+            if (quest.autoTurnIn()
+                    && isReadyToTurnIn(
+                        player,
+                        quest
+                    )) {
+                turnIn(player, questId, false);
+                changed = true;
             }
         }
 
@@ -409,44 +427,69 @@ public final class QuestManager {
                 continue;
             }
 
-            for (QuestObjectiveDefinition objective
-                    : quest.objectives()) {
-                int value = switch (objective.type()) {
-                    case COLLECT ->
-                        countInventory(
-                            player,
-                            objective.target()
-                        );
-                    case VISIT ->
-                        isAtVisitLocation(
-                            player,
-                            objective
-                        )
-                            ? objective.count()
-                            : 0;
-                    default ->
-                        PlayerQuestData.progress(
-                            player,
-                            questId,
-                            objective.id()
-                        );
-                };
+            int guard = 0;
+            boolean repeat;
 
-                if (objective.type()
-                        == QuestObjectiveType.COLLECT
-                        || objective.type()
-                        == QuestObjectiveType.VISIT) {
-                    changed |= PlayerQuestData.setProgress(
-                        player,
-                        questId,
-                        objective.id(),
-                        Math.min(
-                            objective.count(),
-                            value
-                        )
-                    );
+            do {
+                repeat = false;
+
+                for (QuestObjectiveDefinition objective
+                        : currentObjectives(
+                            player,
+                            quest
+                        )) {
+                    int value = switch (objective.type()) {
+                        case COLLECT ->
+                            countInventory(
+                                player,
+                                objective.target()
+                            );
+                        case VISIT ->
+                            isAtVisitLocation(
+                                player,
+                                objective
+                            )
+                                ? objective.count()
+                                : 0;
+                        default ->
+                            PlayerQuestData.progress(
+                                player,
+                                questId,
+                                objective.id()
+                            );
+                    };
+
+                    if (objective.type()
+                            == QuestObjectiveType.COLLECT
+                            || objective.type()
+                                == QuestObjectiveType.VISIT) {
+                        boolean objectiveChanged =
+                            PlayerQuestData.setProgress(
+                                player,
+                                questId,
+                                objective.id(),
+                                Math.min(
+                                    objective.count(),
+                                    value
+                                )
+                            );
+
+                        changed |= objectiveChanged;
+                        repeat |= objectiveChanged;
+                    }
                 }
-            }
+
+                boolean advanced =
+                    advanceStagesIfReady(
+                        player,
+                        quest
+                    );
+
+                changed |= advanced;
+                repeat |= advanced;
+                guard++;
+            } while (repeat
+                    && guard < quest.stages().size() + 1);
 
             if (quest.autoTurnIn()
                     && isReadyToTurnIn(
@@ -470,7 +513,7 @@ public final class QuestManager {
         List<String> result = new ArrayList<>();
 
         for (QuestObjectiveDefinition objective
-                : quest.objectives()) {
+                : currentObjectives(player, quest)) {
             int progress = Math.min(
                 objective.count(),
                 PlayerQuestData.progress(
@@ -490,6 +533,72 @@ public final class QuestManager {
         return result;
     }
 
+    public static QuestStageDefinition currentStage(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        return quest.stage(
+            PlayerQuestData.stageIndex(
+                player,
+                quest.id()
+            )
+        );
+    }
+
+    public static String currentLead(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        QuestStageDefinition stage =
+            currentStage(player, quest);
+
+        if (!stage.lead().isBlank()) {
+            return stage.lead();
+        }
+
+        for (QuestObjectiveDefinition objective
+                : stage.objectives()) {
+            if (PlayerQuestData.progress(
+                    player,
+                    quest.id(),
+                    objective.id()
+                ) < objective.count()) {
+                return objective.displayText();
+            }
+        }
+
+        return isReadyToTurnIn(player, quest)
+            ? "Return to whoever entrusted you with this matter."
+            : "Continue following the trail.";
+    }
+
+    public static List<String> journalNotes(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        return currentStage(player, quest).notes();
+    }
+
+    public static String stageTitle(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        return currentStage(player, quest).title();
+    }
+
+    public static int stageNumber(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        return Math.min(
+            quest.stages().size(),
+            PlayerQuestData.stageIndex(
+                player,
+                quest.id()
+            ) + 1
+        );
+    }
+
     public static void resetQuest(
         ServerPlayer player,
         ResourceLocation questId
@@ -497,6 +606,77 @@ public final class QuestManager {
         PlayerQuestData.removeActive(player, questId);
         PlayerQuestData.clearCompleted(player, questId);
         QuestNetwork.syncJournal(player, false);
+    }
+
+    private static List<QuestObjectiveDefinition>
+        currentObjectives(
+            ServerPlayer player,
+            QuestDefinition quest
+        ) {
+        return currentStage(player, quest).objectives();
+    }
+
+    private static boolean currentStageComplete(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        for (QuestObjectiveDefinition objective
+                : currentObjectives(player, quest)) {
+            if (PlayerQuestData.progress(
+                    player,
+                    quest.id(),
+                    objective.id()
+                ) < objective.count()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean advanceStagesIfReady(
+        ServerPlayer player,
+        QuestDefinition quest
+    ) {
+        boolean changed = false;
+
+        while (PlayerQuestData.stageIndex(
+                    player,
+                    quest.id()
+                ) < quest.stages().size() - 1
+                && currentStageComplete(
+                    player,
+                    quest
+                )) {
+            int next = PlayerQuestData.stageIndex(
+                player,
+                quest.id()
+            ) + 1;
+
+            if (!PlayerQuestData.advanceToStage(
+                    player,
+                    quest.id(),
+                    next
+            )) {
+                break;
+            }
+
+            changed = true;
+
+            String stageTitle =
+                currentStage(player, quest).title();
+
+            player.displayClientMessage(
+                Component.literal(
+                    stageTitle.isBlank()
+                        ? "Journal updated"
+                        : "Journal updated: " + stageTitle
+                ).withStyle(ChatFormatting.GOLD),
+                true
+            );
+        }
+
+        return changed;
     }
 
     private static void progressMatching(
@@ -520,8 +700,10 @@ public final class QuestManager {
                 continue;
             }
 
+            boolean questChanged = false;
+
             for (QuestObjectiveDefinition objective
-                    : quest.objectives()) {
+                    : currentObjectives(player, quest)) {
                 if (objective.type() != type
                         || !targetMatches(
                             objective.target(),
@@ -530,13 +712,21 @@ public final class QuestManager {
                     continue;
                 }
 
-                changed |= PlayerQuestData.addProgress(
+                questChanged |= PlayerQuestData.addProgress(
                     player,
                     questId,
                     objective.id(),
                     amount,
                     objective.count()
                 );
+            }
+
+            if (questChanged) {
+                questChanged |= advanceStagesIfReady(
+                    player,
+                    quest
+                );
+                changed = true;
             }
 
             if (quest.autoTurnIn()

@@ -32,15 +32,23 @@ public record JournalSyncPacket(
             buffer.writeUtf(entry.questId(), 128);
             buffer.writeUtf(entry.title(), 256);
             buffer.writeUtf(entry.description(), 2048);
+            buffer.writeUtf(entry.category(), 64);
+            buffer.writeUtf(entry.section(), 32);
             buffer.writeUtf(entry.status(), 32);
-            buffer.writeVarInt(
-                entry.objectives().size()
-            );
+            buffer.writeUtf(entry.currentLead(), 1024);
+            buffer.writeUtf(entry.stageTitle(), 256);
+            buffer.writeVarInt(entry.stageNumber());
+            buffer.writeVarInt(entry.stageCount());
+            buffer.writeUtf(entry.completionText(), 2048);
+            buffer.writeBoolean(entry.tracked());
 
-            for (String objective
-                    : entry.objectives()) {
-                buffer.writeUtf(objective, 512);
-            }
+            writeStrings(buffer, entry.notes(), 128, 1024);
+            writeStrings(
+                buffer,
+                entry.objectives(),
+                128,
+                512
+            );
         }
     }
 
@@ -61,31 +69,41 @@ public record JournalSyncPacket(
             String title = buffer.readUtf(256);
             String description =
                 buffer.readUtf(2048);
+            String category = buffer.readUtf(64);
+            String section = buffer.readUtf(32);
             String status = buffer.readUtf(32);
-
-            int objectiveCount = Math.min(
-                128,
-                Math.max(0, buffer.readVarInt())
-            );
-
+            String currentLead =
+                buffer.readUtf(1024);
+            String stageTitle =
+                buffer.readUtf(256);
+            int stageNumber =
+                Math.max(0, buffer.readVarInt());
+            int stageCount =
+                Math.max(0, buffer.readVarInt());
+            String completionText =
+                buffer.readUtf(2048);
+            boolean tracked = buffer.readBoolean();
+            List<String> notes =
+                readStrings(buffer, 128, 1024);
             List<String> objectives =
-                new ArrayList<>();
-
-            for (int objective = 0;
-                    objective < objectiveCount;
-                    objective++) {
-                objectives.add(
-                    buffer.readUtf(512)
-                );
-            }
+                readStrings(buffer, 128, 512);
 
             entries.add(
                 new JournalEntry(
                     id,
                     title,
                     description,
+                    category,
+                    section,
                     status,
-                    objectives
+                    currentLead,
+                    stageTitle,
+                    stageNumber,
+                    stageCount,
+                    completionText,
+                    notes,
+                    objectives,
+                    tracked
                 )
             );
         }
@@ -112,5 +130,45 @@ public record JournalSyncPacket(
         );
 
         context.setPacketHandled(true);
+    }
+
+    private static void writeStrings(
+        FriendlyByteBuf buffer,
+        List<String> values,
+        int maximumCount,
+        int maximumLength
+    ) {
+        int size = Math.min(
+            maximumCount,
+            values.size()
+        );
+        buffer.writeVarInt(size);
+
+        for (int i = 0; i < size; i++) {
+            buffer.writeUtf(
+                values.get(i),
+                maximumLength
+            );
+        }
+    }
+
+    private static List<String> readStrings(
+        FriendlyByteBuf buffer,
+        int maximumCount,
+        int maximumLength
+    ) {
+        int size = Math.min(
+            maximumCount,
+            Math.max(0, buffer.readVarInt())
+        );
+        List<String> values = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            values.add(
+                buffer.readUtf(maximumLength)
+            );
+        }
+
+        return values;
     }
 }

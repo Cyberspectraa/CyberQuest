@@ -14,6 +14,8 @@ public record QuestDefinition(
     String title,
     String description,
     String category,
+    String journalSection,
+    String completionText,
     boolean repeatable,
     boolean autoTurnIn,
     List<ResourceLocation> prerequisites,
@@ -25,7 +27,7 @@ public record QuestDefinition(
     String requiredEvolution,
     String requiredClass,
     String requiredClassAdvancement,
-    List<QuestObjectiveDefinition> objectives,
+    List<QuestStageDefinition> stages,
     QuestReward reward
 ) {
     public QuestDefinition {
@@ -37,7 +39,14 @@ public record QuestDefinition(
             : description;
         category = category == null || category.isBlank()
             ? "side"
-            : category;
+            : category.trim().toLowerCase(Locale.ROOT);
+        journalSection = normalizeJournalSection(
+            journalSection,
+            category
+        );
+        completionText = completionText == null
+            ? ""
+            : completionText.trim();
         prerequisites = prerequisites == null
             ? List.of()
             : List.copyOf(prerequisites);
@@ -55,9 +64,21 @@ public record QuestDefinition(
         requiredClassAdvancement = normalize(
             requiredClassAdvancement
         );
-        objectives = objectives == null
-            ? List.of()
-            : List.copyOf(objectives);
+
+        if (stages == null || stages.isEmpty()) {
+            stages = List.of(
+                new QuestStageDefinition(
+                    "main",
+                    "",
+                    "",
+                    List.of(),
+                    List.of()
+                )
+            );
+        } else {
+            stages = List.copyOf(stages);
+        }
+
         reward = reward == null
             ? QuestReward.empty()
             : reward;
@@ -81,6 +102,16 @@ public record QuestDefinition(
             json,
             "category",
             "side"
+        );
+        String journalSection = string(
+            json,
+            "journal_section",
+            ""
+        );
+        String completionText = string(
+            json,
+            "completion_text",
+            ""
         );
         boolean repeatable = bool(
             json,
@@ -161,28 +192,63 @@ public record QuestDefinition(
             }
         }
 
-        List<QuestObjectiveDefinition> objectives =
+        List<QuestStageDefinition> stages =
             new ArrayList<>();
 
-        if (json.has("objectives")
-                && json.get("objectives")
-                    .isJsonArray()) {
-            JsonArray array =
-                json.getAsJsonArray("objectives");
-            int index = 0;
+        if (json.has("stages")
+                && json.get("stages").isJsonArray()) {
+            int stageIndex = 0;
 
-            for (JsonElement element : array) {
+            for (JsonElement element
+                    : json.getAsJsonArray("stages")) {
                 if (!element.isJsonObject()) {
                     continue;
                 }
 
-                objectives.add(
-                    QuestObjectiveDefinition.parse(
+                stages.add(
+                    QuestStageDefinition.parse(
                         element.getAsJsonObject(),
-                        index++
+                        stageIndex++
                     )
                 );
             }
+        }
+
+        // Backwards compatibility: old flat quests become one stage.
+        if (stages.isEmpty()) {
+            List<QuestObjectiveDefinition> objectives =
+                new ArrayList<>();
+
+            if (json.has("objectives")
+                    && json.get("objectives")
+                        .isJsonArray()) {
+                JsonArray array =
+                    json.getAsJsonArray("objectives");
+                int objectiveIndex = 0;
+
+                for (JsonElement element : array) {
+                    if (!element.isJsonObject()) {
+                        continue;
+                    }
+
+                    objectives.add(
+                        QuestObjectiveDefinition.parse(
+                            element.getAsJsonObject(),
+                            objectiveIndex++
+                        )
+                    );
+                }
+            }
+
+            stages.add(
+                new QuestStageDefinition(
+                    "main",
+                    "",
+                    string(json, "current_lead", ""),
+                    stringList(json, "journal_notes"),
+                    objectives
+                )
+            );
         }
 
         QuestReward reward =
@@ -199,6 +265,8 @@ public record QuestDefinition(
             title,
             description,
             category,
+            journalSection,
+            completionText,
             repeatable,
             autoTurnIn,
             prerequisites,
@@ -210,9 +278,38 @@ public record QuestDefinition(
             requiredEvolution,
             requiredClass,
             requiredClassAdvancement,
-            objectives,
+            stages,
             reward
         );
+    }
+
+    public QuestStageDefinition stage(int index) {
+        int safe = Math.max(
+            0,
+            Math.min(index, stages.size() - 1)
+        );
+        return stages.get(safe);
+    }
+
+    private static String normalizeJournalSection(
+        String value,
+        String category
+    ) {
+        String normalized = normalize(value);
+
+        if ("rumour".equals(normalized)
+                || "rumor".equals(normalized)) {
+            return "rumour";
+        }
+
+        if ("journal".equals(normalized)) {
+            return "journal";
+        }
+
+        return "rumour".equalsIgnoreCase(category)
+                || "rumor".equalsIgnoreCase(category)
+            ? "rumour"
+            : "journal";
     }
 
     private static List<String> stringList(
@@ -232,9 +329,7 @@ public record QuestDefinition(
                 continue;
             }
 
-            String value = normalize(
-                element.getAsString()
-            );
+            String value = element.getAsString().trim();
 
             if (!value.isBlank()) {
                 values.add(value);

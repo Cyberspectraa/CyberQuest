@@ -12,13 +12,15 @@ import java.util.Set;
 
 public final class PlayerQuestData {
     public static final String ROOT_KEY = "CyberQuest";
-    public static final int DATA_VERSION = 1;
+    public static final int DATA_VERSION = 2;
 
     private static final String VERSION_KEY = "Version";
     private static final String ACTIVE_KEY = "Active";
     private static final String COMPLETED_KEY = "Completed";
     private static final String OBJECTIVES_KEY = "Objectives";
     private static final String ACCEPTED_AT_KEY = "AcceptedAt";
+    private static final String STAGE_KEY = "Stage";
+    private static final String TRACKED_KEY = "Tracked";
 
     private PlayerQuestData() {
     }
@@ -53,10 +55,17 @@ public final class PlayerQuestData {
             ACCEPTED_AT_KEY,
             player.level().getGameTime()
         );
+        quest.putInt(STAGE_KEY, 0);
         quest.put(OBJECTIVES_KEY, new CompoundTag());
 
         active.put(questId.toString(), quest);
         root.put(ACTIVE_KEY, active);
+
+        if (!root.contains(TRACKED_KEY)
+                || root.getString(TRACKED_KEY).isBlank()) {
+            root.putString(TRACKED_KEY, questId.toString());
+        }
+
         write(player, root);
     }
 
@@ -68,6 +77,13 @@ public final class PlayerQuestData {
         CompoundTag active = root.getCompound(ACTIVE_KEY);
         active.remove(questId.toString());
         root.put(ACTIVE_KEY, active);
+
+        if (questId.toString().equals(
+                root.getString(TRACKED_KEY)
+        )) {
+            root.remove(TRACKED_KEY);
+        }
+
         write(player, root);
     }
 
@@ -114,6 +130,49 @@ public final class PlayerQuestData {
 
         root.put(COMPLETED_KEY, completed);
         write(player, root);
+    }
+
+    public static int stageIndex(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        CompoundTag quest = activeQuest(player, questId);
+
+        return quest == null
+            ? 0
+            : Math.max(0, quest.getInt(STAGE_KEY));
+    }
+
+    public static boolean advanceToStage(
+        ServerPlayer player,
+        ResourceLocation questId,
+        int stageIndex
+    ) {
+        CompoundTag root = root(player);
+        CompoundTag active = root.getCompound(ACTIVE_KEY);
+
+        if (!active.contains(questId.toString())) {
+            return false;
+        }
+
+        CompoundTag quest =
+            active.getCompound(questId.toString());
+        int previous = Math.max(
+            0,
+            quest.getInt(STAGE_KEY)
+        );
+        int safe = Math.max(0, stageIndex);
+
+        if (previous == safe) {
+            return false;
+        }
+
+        quest.putInt(STAGE_KEY, safe);
+        quest.put(OBJECTIVES_KEY, new CompoundTag());
+        active.put(questId.toString(), quest);
+        root.put(ACTIVE_KEY, active);
+        write(player, root);
+        return true;
     }
 
     public static int progress(
@@ -198,6 +257,75 @@ public final class PlayerQuestData {
                 current + amount
             )
         );
+    }
+
+    public static ResourceLocation trackedQuestId(
+        ServerPlayer player
+    ) {
+        CompoundTag root = root(player);
+        String raw = root.getString(TRACKED_KEY);
+
+        if (raw.isBlank()) {
+            return null;
+        }
+
+        ResourceLocation id =
+            ResourceLocation.tryParse(raw);
+
+        if (id == null
+                || !root.getCompound(ACTIVE_KEY)
+                    .contains(raw)) {
+            root.remove(TRACKED_KEY);
+            write(player, root);
+            return null;
+        }
+
+        return id;
+    }
+
+    public static boolean isTracked(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        ResourceLocation tracked =
+            trackedQuestId(player);
+
+        return tracked != null
+            && tracked.equals(questId);
+    }
+
+    public static boolean setTrackedQuest(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        CompoundTag root = root(player);
+        String previous = root.getString(TRACKED_KEY);
+
+        if (questId == null) {
+            if (previous.isBlank()) {
+                return false;
+            }
+
+            root.remove(TRACKED_KEY);
+            write(player, root);
+            return true;
+        }
+
+        if (!root.getCompound(ACTIVE_KEY)
+                .contains(questId.toString())) {
+            return false;
+        }
+
+        if (questId.toString().equals(previous)) {
+            return false;
+        }
+
+        root.putString(
+            TRACKED_KEY,
+            questId.toString()
+        );
+        write(player, root);
+        return true;
     }
 
     public static Set<ResourceLocation> activeIds(
@@ -325,6 +453,25 @@ public final class PlayerQuestData {
             if (!root.contains(COMPLETED_KEY)) {
                 root.put(COMPLETED_KEY, new ListTag());
             }
+        }
+
+        if (oldVersion < 2
+                && root.contains(ACTIVE_KEY)) {
+            CompoundTag active =
+                root.getCompound(ACTIVE_KEY);
+
+            for (String key : active.getAllKeys()) {
+                CompoundTag quest =
+                    active.getCompound(key);
+
+                if (!quest.contains(STAGE_KEY)) {
+                    quest.putInt(STAGE_KEY, 0);
+                }
+
+                active.put(key, quest);
+            }
+
+            root.put(ACTIVE_KEY, active);
         }
 
         root.putInt(VERSION_KEY, DATA_VERSION);

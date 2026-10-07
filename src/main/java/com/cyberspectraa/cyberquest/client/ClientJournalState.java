@@ -31,6 +31,19 @@ public final class ClientJournalState {
         return entries;
     }
 
+    public static JournalEntry trackedEntry() {
+        for (JournalEntry entry : entries) {
+            if (entry.tracked()
+                    && !"COMPLETED".equals(
+                        entry.status()
+                    )) {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
     public static void clear() {
         entries = List.of();
     }
