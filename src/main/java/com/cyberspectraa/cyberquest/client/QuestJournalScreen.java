@@ -69,12 +69,16 @@ public final class QuestJournalScreen extends Screen {
             );
         }
 
+        Component closeHint = Component.literal("Close: ")
+            .append(
+                ClientKeyMappings.QUEST_JOURNAL
+                    .getTranslatedKeyMessage()
+            );
+
         graphics.drawString(
             font,
-            Component.literal(
-                "J: close journal"
-            ),
-            layout.right() - 91,
+            closeHint,
+            layout.right() - font.width(closeHint) - 14,
             layout.bottom() - 14,
             GuiTheme.INK_MUTED,
             false
