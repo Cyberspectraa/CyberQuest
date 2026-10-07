@@ -67,6 +67,38 @@ public final class QuestFeedback {
         pageTurn(player, 1.12F);
     }
 
+    public static void failed(
+        ServerPlayer player,
+        QuestDefinition quest,
+        int reputationPenalty
+    ) {
+        String suffix = reputationPenalty > 0
+            ? " Guild reputation -" + reputationPenalty
+            : "";
+
+        player.displayClientMessage(
+            Component.literal(
+                "Contract failed: "
+            ).withStyle(ChatFormatting.RED)
+            .append(
+                Component.literal(quest.title())
+                    .withStyle(ChatFormatting.GRAY)
+            )
+            .append(
+                Component.literal(suffix)
+                    .withStyle(ChatFormatting.DARK_RED)
+            ),
+            true
+        );
+
+        player.playNotifySound(
+            SoundEvents.VILLAGER_NO,
+            SoundSource.PLAYERS,
+            0.55F,
+            0.85F
+        );
+    }
+
     public static void completed(
         ServerPlayer player,
         QuestDefinition quest
