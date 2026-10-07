@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class GuildContractGenerator {
-    public static final int OFFER_COUNT = 4;
+    public static final int OFFER_COUNT = 6;
+    public static final int MIN_OFFERS = 4;
 
     private static final Target[] HUNTS = {
         new Target(
@@ -141,11 +142,19 @@ public final class GuildContractGenerator {
         RandomSource random =
             RandomSource.create(seed);
 
+        int offerCount =
+            MIN_OFFERS
+                + random.nextInt(
+                    OFFER_COUNT
+                        - MIN_OFFERS
+                        + 1
+                );
+
         List<ProceduralQuestOffer> offers =
             new ArrayList<>();
 
         for (int slot = 0;
-                slot < OFFER_COUNT;
+                slot < offerCount;
                 slot++) {
             boolean hunt =
                 slot % 2 == 0
