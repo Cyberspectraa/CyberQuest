@@ -3,9 +3,12 @@ package com.cyberspectraa.cyberquest.client;
 import com.cyberspectraa.cyberquest.network.JournalEntry;
 import com.cyberspectraa.cyberquest.network.QuestNetwork;
 import com.cyberspectraa.cyberquest.network.packet.SetTrackedQuestPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.ArrayList;
@@ -18,6 +21,12 @@ public final class QuestJournalScreen extends Screen {
 
     public QuestJournalScreen() {
         super(Component.literal("Adventurer's Journal"));
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        playPageTurn(0.95F);
     }
 
     @Override
@@ -143,6 +152,7 @@ public final class QuestJournalScreen extends Screen {
             )) {
                 tab = value;
                 selected = 0;
+                playPageTurn(1.0F);
                 return true;
             }
         }
@@ -168,6 +178,7 @@ public final class QuestJournalScreen extends Screen {
                     && mouseY
                         < rowY + rowHeight - 2) {
                 selected = i;
+                playPageTurn(1.08F);
                 return true;
             }
 
@@ -196,6 +207,14 @@ public final class QuestJournalScreen extends Screen {
                         mouseX,
                         mouseY
                 )) {
+                    Minecraft.getInstance()
+                        .getSoundManager()
+                        .play(
+                            SimpleSoundInstance.forUI(
+                                SoundEvents.UI_BUTTON_CLICK,
+                                1.0F
+                            )
+                        );
                     QuestNetwork.sendToServer(
                         new SetTrackedQuestPacket(
                             entry.tracked()
@@ -392,6 +411,20 @@ public final class QuestJournalScreen extends Screen {
             false
         );
         y += 12;
+
+        if (!entry.timer().isBlank()) {
+            graphics.drawString(
+                font,
+                Component.literal(entry.timer()),
+                x,
+                y,
+                entry.timer().startsWith("Expired")
+                    ? 0xFF9A2E27
+                    : GuiTheme.GOLD,
+                false
+            );
+            y += 11;
+        }
 
         String category =
             entry.category().isBlank()
@@ -758,6 +791,17 @@ public final class QuestJournalScreen extends Screen {
             );
             y += 10;
         }
+    }
+
+    private void playPageTurn(float pitch) {
+        Minecraft.getInstance()
+            .getSoundManager()
+            .play(
+                SimpleSoundInstance.forUI(
+                    SoundEvents.BOOK_PAGE_TURN,
+                    pitch
+                )
+            );
     }
 
     private List<JournalEntry> visibleEntries() {

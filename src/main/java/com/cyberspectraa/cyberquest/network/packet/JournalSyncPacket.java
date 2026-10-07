@@ -36,13 +36,19 @@ public record JournalSyncPacket(
             buffer.writeUtf(entry.section(), 32);
             buffer.writeUtf(entry.status(), 32);
             buffer.writeUtf(entry.currentLead(), 1024);
+            buffer.writeUtf(entry.timer(), 128);
             buffer.writeUtf(entry.stageTitle(), 256);
             buffer.writeVarInt(entry.stageNumber());
             buffer.writeVarInt(entry.stageCount());
             buffer.writeUtf(entry.completionText(), 2048);
             buffer.writeBoolean(entry.tracked());
 
-            writeStrings(buffer, entry.notes(), 128, 1024);
+            writeStrings(
+                buffer,
+                entry.notes(),
+                128,
+                1024
+            );
             writeStrings(
                 buffer,
                 entry.objectives(),
@@ -74,6 +80,7 @@ public record JournalSyncPacket(
             String status = buffer.readUtf(32);
             String currentLead =
                 buffer.readUtf(1024);
+            String timer = buffer.readUtf(128);
             String stageTitle =
                 buffer.readUtf(256);
             int stageNumber =
@@ -82,11 +89,21 @@ public record JournalSyncPacket(
                 Math.max(0, buffer.readVarInt());
             String completionText =
                 buffer.readUtf(2048);
-            boolean tracked = buffer.readBoolean();
+            boolean tracked =
+                buffer.readBoolean();
+
             List<String> notes =
-                readStrings(buffer, 128, 1024);
+                readStrings(
+                    buffer,
+                    128,
+                    1024
+                );
             List<String> objectives =
-                readStrings(buffer, 128, 512);
+                readStrings(
+                    buffer,
+                    128,
+                    512
+                );
 
             entries.add(
                 new JournalEntry(
@@ -97,6 +114,7 @@ public record JournalSyncPacket(
                     section,
                     status,
                     currentLead,
+                    timer,
                     stageTitle,
                     stageNumber,
                     stageCount,
@@ -142,6 +160,7 @@ public record JournalSyncPacket(
             maximumCount,
             values.size()
         );
+
         buffer.writeVarInt(size);
 
         for (int i = 0; i < size; i++) {
@@ -159,13 +178,20 @@ public record JournalSyncPacket(
     ) {
         int size = Math.min(
             maximumCount,
-            Math.max(0, buffer.readVarInt())
+            Math.max(
+                0,
+                buffer.readVarInt()
+            )
         );
-        List<String> values = new ArrayList<>();
+
+        List<String> values =
+            new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
             values.add(
-                buffer.readUtf(maximumLength)
+                buffer.readUtf(
+                    maximumLength
+                )
             );
         }
 

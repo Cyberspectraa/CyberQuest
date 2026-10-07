@@ -10,6 +10,7 @@ public record JournalEntry(
     String section,
     String status,
     String currentLead,
+    String timer,
     String stageTitle,
     int stageNumber,
     int stageCount,
@@ -26,6 +27,7 @@ public record JournalEntry(
         section = safe(section);
         status = safe(status);
         currentLead = safe(currentLead);
+        timer = safe(timer);
         stageTitle = safe(stageTitle);
         completionText = safe(completionText);
         stageNumber = Math.max(0, stageNumber);

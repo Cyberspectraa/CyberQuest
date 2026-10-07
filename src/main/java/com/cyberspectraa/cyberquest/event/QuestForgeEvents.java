@@ -42,6 +42,7 @@ public final class QuestForgeEvents {
         }
 
         PlayerQuestData.ensure(player);
+        QuestManager.checkExpired(player);
         QuestManager.refreshDynamicObjectives(player);
         QuestNetwork.syncJournal(player, false);
     }
