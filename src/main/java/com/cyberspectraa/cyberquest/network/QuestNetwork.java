@@ -116,70 +116,75 @@ public final class QuestNetwork {
 
     public static void openGuildBoard(
         ServerPlayer player,
-        BlockPos pos
+        BlockPos pos,
+        int slot
     ) {
         if (!(player.level() instanceof ServerLevel level)) {
             return;
         }
 
-        List<GuildBoardOfferData> result = new ArrayList<>();
         List<ProceduralQuestOffer> offers =
             GuildContractGenerator.offers(level, pos);
+
+        if (slot < 0 || slot >= offers.size()) {
+            return;
+        }
+
+        ProceduralQuestOffer offer =
+            offers.get(slot);
 
         long day =
             level.getDayTime() / 24000L;
 
-        for (int slot = 0; slot < offers.size(); slot++) {
-            ProceduralQuestOffer offer = offers.get(slot);
-
-            String state =
-                PlayerQuestData.isActive(player, offer.id())
-                    ? "ACTIVE"
-                    : PlayerQuestData.hasGuildOfferTaken(
-                        player,
-                        offer.id(),
-                        day
-                    )
-                        ? "COMPLETED"
-                        : "AVAILABLE";
-
-            String reward =
-                "+" + offer.rewardGuildReputation()
-                    + " guild rep • "
-                    + offer.silverCoins()
-                    + " silver";
-
-            String timer =
-                offer.durationDays() <= 0
-                    ? ""
-                    : offer.durationDays()
-                        + (offer.durationDays() == 1 ? " day" : " days");
-
-            String penalty =
-                offer.failureGuildReputation() <= 0
-                    ? ""
-                    : "Fail: -" + offer.failureGuildReputation() + " rep";
-
-            result.add(
-                new GuildBoardOfferData(
-                    slot,
-                    offer.id().toString(),
-                    offer.title(),
-                    offer.objectiveText(),
-                    reward,
-                    timer,
-                    penalty,
-                    state
+        String state =
+            PlayerQuestData.isActive(player, offer.id())
+                ? "ACTIVE"
+                : PlayerQuestData.hasGuildOfferTaken(
+                    player,
+                    offer.id(),
+                    day
                 )
-            );
-        }
+                    ? "COMPLETED"
+                    : "AVAILABLE";
+
+        String reward =
+            "+" + offer.rewardGuildReputation()
+                + " guild rep • "
+                + offer.silverCoins()
+                + " silver";
+
+        String timer =
+            offer.durationDays() <= 0
+                ? ""
+                : offer.durationDays()
+                    + (offer.durationDays() == 1
+                        ? " day"
+                        : " days");
+
+        String penalty =
+            offer.failureGuildReputation() <= 0
+                ? ""
+                : "Fail: -"
+                    + offer.failureGuildReputation()
+                    + " rep";
 
         CHANNEL.send(
             PacketDistributor.PLAYER.with(() -> player),
             new OpenGuildBoardPacket(
                 pos,
                 PlayerQuestData.guildReputation(player),
-                result
+                List.of(
+                    new GuildBoardOfferData(
+                        slot,
+                        offer.id().toString(),
+                        offer.title(),
+                        offer.objectiveText(),
+                        reward,
+                        timer,
+                        penalty,
+                        state
+                    )
+                )
             )
         );
     }
