@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0-alpha.2
+
+### Textured medieval journal pass
+- Replaced the flat-color journal panels with real pixel-art wood, parchment, banner and button textures sourced from the MIT-licensed Adventure Production Kit GitHub project.
+- Included the upstream MIT copyright/license notice inside the built JAR and documented exactly which GUI assets are reused.
+- Reworked the journal into a textured wooden folio with separate parchment pages, a header banner, textured tabs, textured quest rows and a textured Track/Untrack control.
+- Updated the tracked-thread HUD to use the same wood/banner texture language so it matches the journal instead of looking like a generic overlay.
+- Kept the UI deliberately medieval-fantasy: wood, parchment, ink, muted wax-red accents and gold trim; no modern or sci-fi styling.
+- The Adventurer's Journal is opened directly with the configurable CyberQuest keybind, default J; there is no physical quest-book item requirement.
+- Pressing the configured journal key again while the journal is open closes it, and the on-screen close hint reflects remapped controls.
+
 ## 0.2.0-alpha.1
 
 ### Living Threads foundation
