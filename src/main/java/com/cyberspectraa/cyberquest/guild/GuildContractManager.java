@@ -75,13 +75,17 @@ public final class GuildContractManager {
         ProceduralQuestOffer offer =
             offers.get(slot);
 
+        long day =
+            level.getDayTime() / 24000L;
+
         if (PlayerQuestData.isActive(
                 player,
                 offer.id()
         )
-                || PlayerQuestData.isCompleted(
+                || PlayerQuestData.hasGuildOfferTaken(
                     player,
-                    offer.id()
+                    offer.id(),
+                    day
                 )) {
             return false;
         }
@@ -94,6 +98,11 @@ public final class GuildContractManager {
             );
 
         if (started) {
+            PlayerQuestData.markGuildOfferTaken(
+                player,
+                offer.id(),
+                day
+            );
             QuestNetwork.openGuildBoard(
                 player,
                 pos
