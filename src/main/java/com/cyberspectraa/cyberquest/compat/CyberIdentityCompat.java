@@ -31,7 +31,7 @@ public final class CyberIdentityCompat {
         CompoundTag root = player.getPersistentData()
             .getCompound("CyberClasses");
         return normalize(
-            root.getString("ClassAdvancement")
+            root.getString("Advancement")
         );
     }
 

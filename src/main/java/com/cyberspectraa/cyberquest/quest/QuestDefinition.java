@@ -27,6 +27,8 @@ public record QuestDefinition(
     String requiredEvolution,
     String requiredClass,
     String requiredClassAdvancement,
+    int timeLimitDays,
+    int failureGuildReputation,
     List<QuestStageDefinition> stages,
     QuestReward reward
 ) {
@@ -63,6 +65,11 @@ public record QuestDefinition(
         requiredClass = normalize(requiredClass);
         requiredClassAdvancement = normalize(
             requiredClassAdvancement
+        );
+        timeLimitDays = Math.max(0, timeLimitDays);
+        failureGuildReputation = Math.max(
+            0,
+            failureGuildReputation
         );
 
         if (stages == null || stages.isEmpty()) {
@@ -165,6 +172,16 @@ public record QuestDefinition(
             json,
             "required_class_advancement",
             ""
+        );
+        int timeLimitDays = integer(
+            json,
+            "time_limit_days",
+            0
+        );
+        int failureGuildReputation = integer(
+            json,
+            "failure_guild_reputation",
+            0
         );
 
         List<ResourceLocation> prerequisites =
@@ -278,6 +295,8 @@ public record QuestDefinition(
             requiredEvolution,
             requiredClass,
             requiredClassAdvancement,
+            timeLimitDays,
+            failureGuildReputation,
             stages,
             reward
         );

@@ -12,7 +12,7 @@ import java.util.Set;
 
 public final class PlayerQuestData {
     public static final String ROOT_KEY = "CyberQuest";
-    public static final int DATA_VERSION = 2;
+    public static final int DATA_VERSION = 3;
 
     private static final String VERSION_KEY = "Version";
     private static final String ACTIVE_KEY = "Active";
@@ -21,6 +21,10 @@ public final class PlayerQuestData {
     private static final String ACCEPTED_AT_KEY = "AcceptedAt";
     private static final String STAGE_KEY = "Stage";
     private static final String TRACKED_KEY = "Tracked";
+    private static final String EXPIRES_AT_KEY = "ExpiresAt";
+    private static final String FAILURE_GUILD_REP_KEY = "FailureGuildReputation";
+    private static final String GENERATED_KEY = "Generated";
+    private static final String GUILD_REPUTATION_KEY = "GuildReputation";
 
     private PlayerQuestData() {
     }
@@ -45,10 +49,37 @@ public final class PlayerQuestData {
 
     public static void start(
         ServerPlayer player,
-        ResourceLocation questId
+        com.cyberspectraa.cyberquest.quest.QuestDefinition quest
     ) {
+        startInternal(
+            player,
+            quest,
+            null
+        );
+    }
+
+    public static void startGenerated(
+        ServerPlayer player,
+        com.cyberspectraa.cyberquest.quest.QuestDefinition quest,
+        CompoundTag generatedData
+    ) {
+        startInternal(
+            player,
+            quest,
+            generatedData
+        );
+    }
+
+    private static void startInternal(
+        ServerPlayer player,
+        com.cyberspectraa.cyberquest.quest.QuestDefinition definition,
+        CompoundTag generatedData
+    ) {
+        ResourceLocation questId =
+            definition.id();
         CompoundTag root = root(player);
-        CompoundTag active = root.getCompound(ACTIVE_KEY);
+        CompoundTag active =
+            root.getCompound(ACTIVE_KEY);
 
         CompoundTag quest = new CompoundTag();
         quest.putLong(
@@ -56,14 +87,48 @@ public final class PlayerQuestData {
             player.level().getGameTime()
         );
         quest.putInt(STAGE_KEY, 0);
-        quest.put(OBJECTIVES_KEY, new CompoundTag());
+        quest.put(
+            OBJECTIVES_KEY,
+            new CompoundTag()
+        );
 
-        active.put(questId.toString(), quest);
+        if (definition.timeLimitDays() > 0) {
+            quest.putLong(
+                EXPIRES_AT_KEY,
+                player.level().getGameTime()
+                    + definition.timeLimitDays()
+                        * 24000L
+            );
+        }
+
+        if (definition.failureGuildReputation() > 0) {
+            quest.putInt(
+                FAILURE_GUILD_REP_KEY,
+                definition.failureGuildReputation()
+            );
+        }
+
+        if (generatedData != null) {
+            quest.put(
+                GENERATED_KEY,
+                generatedData.copy()
+            );
+        }
+
+        active.put(
+            questId.toString(),
+            quest
+        );
         root.put(ACTIVE_KEY, active);
 
         if (!root.contains(TRACKED_KEY)
-                || root.getString(TRACKED_KEY).isBlank()) {
-            root.putString(TRACKED_KEY, questId.toString());
+                || root.getString(
+                    TRACKED_KEY
+                ).isBlank()) {
+            root.putString(
+                TRACKED_KEY,
+                questId.toString()
+            );
         }
 
         write(player, root);
@@ -328,6 +393,105 @@ public final class PlayerQuestData {
         return true;
     }
 
+
+    public static long expiresAt(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        CompoundTag quest =
+            activeQuest(player, questId);
+
+        return quest == null
+            || !quest.contains(EXPIRES_AT_KEY)
+            ? 0L
+            : quest.getLong(EXPIRES_AT_KEY);
+    }
+
+    public static long timeRemaining(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        long expiresAt =
+            expiresAt(player, questId);
+
+        if (expiresAt <= 0L) {
+            return -1L;
+        }
+
+        return Math.max(
+            0L,
+            expiresAt
+                - player.level().getGameTime()
+        );
+    }
+
+    public static int failureGuildReputation(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        CompoundTag quest =
+            activeQuest(player, questId);
+
+        return quest == null
+            ? 0
+            : Math.max(
+                0,
+                quest.getInt(
+                    FAILURE_GUILD_REP_KEY
+                )
+            );
+    }
+
+    public static CompoundTag generatedData(
+        ServerPlayer player,
+        ResourceLocation questId
+    ) {
+        CompoundTag quest =
+            activeQuest(player, questId);
+
+        if (quest == null
+                || !quest.contains(
+                    GENERATED_KEY,
+                    Tag.TAG_COMPOUND
+                )) {
+            return null;
+        }
+
+        return quest.getCompound(
+            GENERATED_KEY
+        ).copy();
+    }
+
+    public static int guildReputation(
+        ServerPlayer player
+    ) {
+        return root(player).getInt(
+            GUILD_REPUTATION_KEY
+        );
+    }
+
+    public static int addGuildReputation(
+        ServerPlayer player,
+        int amount
+    ) {
+        CompoundTag root = root(player);
+        int next = Math.max(
+            -100,
+            Math.min(
+                1000,
+                root.getInt(
+                    GUILD_REPUTATION_KEY
+                ) + amount
+            )
+        );
+        root.putInt(
+            GUILD_REPUTATION_KEY,
+            next
+        );
+        write(player, root);
+        return next;
+    }
+
     public static Set<ResourceLocation> activeIds(
         ServerPlayer player
     ) {
@@ -472,6 +636,16 @@ public final class PlayerQuestData {
             }
 
             root.put(ACTIVE_KEY, active);
+        }
+
+        if (oldVersion < 3
+                && !root.contains(
+                    GUILD_REPUTATION_KEY
+                )) {
+            root.putInt(
+                GUILD_REPUTATION_KEY,
+                0
+            );
         }
 
         root.putInt(VERSION_KEY, DATA_VERSION);

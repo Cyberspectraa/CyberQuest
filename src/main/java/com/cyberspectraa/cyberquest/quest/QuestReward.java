@@ -11,16 +11,29 @@ import java.util.List;
 public record QuestReward(
     long cyberXp,
     int vanillaXp,
+    int guildReputation,
+    String classUnlock,
     List<ItemReward> items
 ) {
     public QuestReward {
         cyberXp = Math.max(0L, cyberXp);
         vanillaXp = Math.max(0, vanillaXp);
-        items = items == null ? List.of() : List.copyOf(items);
+        classUnlock = classUnlock == null
+            ? ""
+            : classUnlock.trim().toLowerCase();
+        items = items == null
+            ? List.of()
+            : List.copyOf(items);
     }
 
     public static QuestReward empty() {
-        return new QuestReward(0L, 0, List.of());
+        return new QuestReward(
+            0L,
+            0,
+            0,
+            "",
+            List.of()
+        );
     }
 
     public static QuestReward parse(JsonObject json) {
@@ -29,49 +42,95 @@ public record QuestReward(
         }
 
         long cyberXp = json.has("cyber_xp")
-            ? Math.max(0L, json.get("cyber_xp").getAsLong())
+            ? Math.max(
+                0L,
+                json.get("cyber_xp").getAsLong()
+            )
             : 0L;
 
         int vanillaXp = json.has("vanilla_xp")
-            ? Math.max(0, json.get("vanilla_xp").getAsInt())
+            ? Math.max(
+                0,
+                json.get("vanilla_xp").getAsInt()
+            )
             : 0;
 
-        List<ItemReward> items = new ArrayList<>();
+        int guildReputation =
+            json.has("guild_reputation")
+                ? json.get(
+                    "guild_reputation"
+                ).getAsInt()
+                : 0;
 
-        if (json.has("items") && json.get("items").isJsonArray()) {
-            JsonArray array = json.getAsJsonArray("items");
+        String classUnlock =
+            json.has("class_unlock")
+                ? json.get(
+                    "class_unlock"
+                ).getAsString()
+                : "";
+
+        List<ItemReward> items =
+            new ArrayList<>();
+
+        if (json.has("items")
+                && json.get("items")
+                    .isJsonArray()) {
+            JsonArray array =
+                json.getAsJsonArray("items");
 
             for (JsonElement element : array) {
                 if (!element.isJsonObject()) {
                     continue;
                 }
 
-                JsonObject item = element.getAsJsonObject();
+                JsonObject item =
+                    element.getAsJsonObject();
 
                 if (!item.has("item")) {
                     continue;
                 }
 
-                ResourceLocation id = ResourceLocation.tryParse(
-                    item.get("item").getAsString()
-                );
+                ResourceLocation id =
+                    ResourceLocation.tryParse(
+                        item.get("item")
+                            .getAsString()
+                    );
 
                 if (id == null) {
                     continue;
                 }
 
-                int count = item.has("count")
-                    ? Math.max(1, item.get("count").getAsInt())
-                    : 1;
+                int count =
+                    item.has("count")
+                        ? Math.max(
+                            1,
+                            item.get("count")
+                                .getAsInt()
+                        )
+                        : 1;
 
-                items.add(new ItemReward(id, count));
+                items.add(
+                    new ItemReward(
+                        id,
+                        count
+                    )
+                );
             }
         }
 
-        return new QuestReward(cyberXp, vanillaXp, items);
+        return new QuestReward(
+            cyberXp,
+            vanillaXp,
+            guildReputation,
+            classUnlock,
+            items
+        );
     }
 
-    public record ItemReward(ResourceLocation itemId, int count) {
+    public record ItemReward(
+        ResourceLocation itemId,
+        int count
+    ) {
         public ItemReward {
             count = Math.max(1, count);
         }
