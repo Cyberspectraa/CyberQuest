@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0-alpha.3
+
+### Minecraft-style open journal redesign
+- Rebuilt the journal layout after reviewing Mojang's Bedrock book UI structure: separate book back, spine, page creases and page edges.
+- Created original CyberQuest pixel-art book, tab and entry textures based on those layout ideas rather than redistributing Mojang's sample texture files.
+- Removed the oversized full-width header and giant tab treatment; the journal is now a compact open book with small leather bookmarks.
+- Fixed empty-state text so it is wrapped and centered inside a single page instead of crossing the book spine.
+- Fixed quest title, description, notes and lead text widths so they stay inside the right-hand page.
+- Removed the clipped bottom-right close hint; the configurable journal key still toggles the journal and Escape still closes it normally.
+- Simplified the left page into a clean list of recorded threads and the right page into the selected thread's details.
+- Updated the tracked-thread HUD to use the same parchment-entry texture language.
+- Kept the journal intentionally medieval-fantasy and less menu-like for multiplayer immersion.
+
 ## 0.2.0-alpha.2
 
 ### Textured medieval journal pass
