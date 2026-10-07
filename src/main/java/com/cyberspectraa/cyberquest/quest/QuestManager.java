@@ -269,10 +269,15 @@ public final class QuestManager {
             player,
             questId
         );
-        PlayerQuestData.markCompleted(
-            player,
-            questId
-        );
+
+        if (!"guild".equalsIgnoreCase(
+                quest.category()
+        )) {
+            PlayerQuestData.markCompleted(
+                player,
+                questId
+            );
+        }
 
         grantRewards(
             player,
