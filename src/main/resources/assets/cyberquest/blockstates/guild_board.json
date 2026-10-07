@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "cyberquest:block/guild_board"
+    }
+  }
+}

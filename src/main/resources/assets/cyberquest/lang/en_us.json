@@ -1,4 +1,7 @@
 {
   "key.cyberquest.journal": "Open Adventurer's Journal",
-  "key.categories.cyberquest": "CyberQuest"
+  "key.categories.cyberquest": "CyberQuest",
+  "block.cyberquest.guild_board": "Guild Board",
+  "item.cyberquest.guild_board": "Guild Board",
+  "itemGroup.cyberquest": "CyberQuest"
 }
