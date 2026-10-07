@@ -647,8 +647,7 @@ public final class QuestJournalScreen extends Screen {
             ),
             layout.rightPageCenterX(),
             layout.pageTop() + 50,
-            GuiTheme.INK,
-            false
+            GuiTheme.INK
         );
 
         drawCenteredWrapped(
