@@ -12,8 +12,11 @@ public final class QuestHudOverlay {
     private QuestHudOverlay() {
     }
 
-    public static void render(GuiGraphics graphics) {
-        Minecraft minecraft = Minecraft.getInstance();
+    public static void render(
+        GuiGraphics graphics
+    ) {
+        Minecraft minecraft =
+            Minecraft.getInstance();
 
         if (minecraft.player == null
                 || minecraft.screen != null
@@ -29,67 +32,70 @@ public final class QuestHudOverlay {
         }
 
         int width = Math.min(
-            220,
+            194,
             Math.max(
-                160,
-                graphics.guiWidth() / 3
+                158,
+                graphics.guiWidth() / 4
             )
         );
-        int left =
-            graphics.guiWidth() - width - 8;
-        int top = 8;
+        int height = 42;
+        int x =
+            graphics.guiWidth()
+                - width - 8;
+        int y = 8;
 
-        GuiTheme.woodPanel(
+        GuiTheme.entry(
             graphics,
-            left,
-            top,
+            x,
+            y,
             width,
-            50
-        );
-        GuiTheme.banner(
-            graphics,
-            left + 6,
-            top + 5,
-            width - 12,
-            16
+            height,
+            true
         );
 
         graphics.drawString(
             minecraft.font,
-            minecraft.font.plainSubstrByWidth(
-                entry.title().toUpperCase(),
-                width - 26
+            Component.literal(
+                minecraft.font
+                    .plainSubstrByWidth(
+                        entry.title(),
+                        width - 18
+                    )
             ),
-            left + 13,
-            top + 9,
-            GuiTheme.GOLD,
+            x + 9,
+            y + 7,
+            GuiTheme.INK,
             false
         );
 
-        List<FormattedCharSequence> lead =
+        List<FormattedCharSequence> lines =
             minecraft.font.split(
                 Component.literal(
-                    entry.currentLead().isBlank()
+                    entry.currentLead()
+                        .isBlank()
                         ? "Follow the trail."
                         : entry.currentLead()
                 ),
                 width - 18
             );
 
-        int y = top + 27;
+        int textY = y + 20;
 
         for (int i = 0;
-                i < Math.min(2, lead.size());
+                i < Math.min(
+                    2,
+                    lines.size()
+                );
                 i++) {
             graphics.drawString(
                 minecraft.font,
-                lead.get(i),
-                left + 9,
-                y,
-                GuiTheme.TEXT_MUTED,
+                lines.get(i),
+                x + 9,
+                textY,
+                GuiTheme.INK_MUTED,
                 false
             );
-            y += 9;
+            textY += 9;
         }
     }
 }
