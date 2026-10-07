@@ -25,6 +25,8 @@ public final class PlayerQuestData {
     private static final String FAILURE_GUILD_REP_KEY = "FailureGuildReputation";
     private static final String GENERATED_KEY = "Generated";
     private static final String GUILD_REPUTATION_KEY = "GuildReputation";
+    private static final String GUILD_TAKEN_DAY_KEY = "GuildTakenDay";
+    private static final String GUILD_TAKEN_KEY = "GuildTaken";
 
     private PlayerQuestData() {
     }
@@ -490,6 +492,62 @@ public final class PlayerQuestData {
         );
         write(player, root);
         return next;
+    }
+
+
+    public static boolean hasGuildOfferTaken(
+        ServerPlayer player,
+        ResourceLocation questId,
+        long day
+    ) {
+        CompoundTag root = root(player);
+
+        if (root.getLong(GUILD_TAKEN_DAY_KEY) != day) {
+            return false;
+        }
+
+        ListTag taken = root.getList(
+            GUILD_TAKEN_KEY,
+            Tag.TAG_STRING
+        );
+        String value = questId.toString();
+
+        for (int i = 0; i < taken.size(); i++) {
+            if (value.equals(taken.getString(i))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void markGuildOfferTaken(
+        ServerPlayer player,
+        ResourceLocation questId,
+        long day
+    ) {
+        CompoundTag root = root(player);
+
+        if (root.getLong(GUILD_TAKEN_DAY_KEY) != day) {
+            root.putLong(GUILD_TAKEN_DAY_KEY, day);
+            root.put(GUILD_TAKEN_KEY, new ListTag());
+        }
+
+        ListTag taken = root.getList(
+            GUILD_TAKEN_KEY,
+            Tag.TAG_STRING
+        );
+        String value = questId.toString();
+
+        for (int i = 0; i < taken.size(); i++) {
+            if (value.equals(taken.getString(i))) {
+                return;
+            }
+        }
+
+        taken.add(StringTag.valueOf(value));
+        root.put(GUILD_TAKEN_KEY, taken);
+        write(player, root);
     }
 
     public static Set<ResourceLocation> activeIds(
