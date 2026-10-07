@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.3.0-alpha.2
+
+### Physical 2x3 Guild Quest Board
+- Rebuilt the Guild Board from a single cube into a true 2-block-wide by 3-block-tall wall-mounted multiblock.
+- The board can only be placed flat against a supported vertical wall and checks all six spaces before placement.
+- The six pieces form one continuous spruce notice board with a dark-oak outer frame and a thin wall-mounted collision shape.
+- Added six physical notice positions spread across the board. Daily Guild contracts now generate four to six notices, so unused positions visibly remain bare.
+- Added three parchment styles: handwritten notice, bounty poster and wax-sealed contract, with different sizes and slight rotations to make the board feel naturally pinned rather than like a grid of menu buttons.
+- Available contracts are represented by actual paper models on the board. Right-clicking a paper opens that specific contract instead of opening a generic list.
+- Empty board positions respond that no contract is pinned there.
+- Clicking a contract now opens a compact parchment notice showing the task, Guild Reputation, reward, deadline, failure penalty and acceptance state.
+- Accepted/taken notices remain physically posted for other multiplayer players because Guild contracts are personal while the daily board itself is shared.
+- The board refreshes its visible papers as the Minecraft day changes and also refreshes immediately when interacted with.
+- Breaking any one of the six board pieces removes the whole multiblock and drops one Guild Board item. Removing its supporting wall also safely removes the board.
+- The multiblock cannot be pushed by pistons and no longer uses the obsolete single-block loot/model files.
+- Added an original pixel-art Guild Board item icon and original parchment/notice textures inspired by the supplied medieval quest-board reference.
+- Kept vanilla paper/book UI sounds when reading and accepting notices.
+
 ## 0.3.0-alpha.1
 
 ### Quest gameplay foundation, class quests and guild contracts
