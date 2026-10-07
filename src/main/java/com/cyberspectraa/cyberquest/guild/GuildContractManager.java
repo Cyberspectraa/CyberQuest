@@ -20,7 +20,8 @@ public final class GuildContractManager {
 
     public static void openBoard(
         ServerPlayer player,
-        BlockPos pos
+        BlockPos pos,
+        int slot
     ) {
         QuestManager.turnInReadyCategory(
             player,
@@ -29,7 +30,8 @@ public final class GuildContractManager {
 
         QuestNetwork.openGuildBoard(
             player,
-            pos
+            pos,
+            slot
         );
     }
 
@@ -72,6 +74,11 @@ public final class GuildContractManager {
                 level,
                 pos
             );
+
+        if (slot >= offers.size()) {
+            return false;
+        }
+
         ProceduralQuestOffer offer =
             offers.get(slot);
 
@@ -105,7 +112,8 @@ public final class GuildContractManager {
             );
             QuestNetwork.openGuildBoard(
                 player,
-                pos
+                pos,
+                slot
             );
         }
 
