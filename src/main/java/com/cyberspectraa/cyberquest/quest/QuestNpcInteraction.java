@@ -3,8 +3,6 @@ package com.cyberspectraa.cyberquest.quest;
 import com.cyberspectraa.cyberquest.compat.CyberNpcQuestCompat;
 import com.cyberspectraa.cyberquest.compat.CyberServerWorldStateCompat;
 import com.cyberspectraa.cyberquest.player.PlayerQuestData;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -14,22 +12,31 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Bridges CyberNpc interaction into the quest system without owning or
+ * cancelling the NPC's normal interaction. Quest state may update alongside
+ * dialogue, trading, or other CyberNpc behaviour.
+ */
 public final class QuestNpcInteraction {
     private QuestNpcInteraction() {
     }
 
-    public static boolean handle(
+    public static void handle(
         ServerPlayer player,
         Entity npc
     ) {
         if (!CyberNpcQuestCompat.isCyberNpc(npc)) {
-            return false;
+            return;
         }
 
-        String npcId = CyberNpcQuestCompat.npcId(npc);
+        String npcId =
+            CyberNpcQuestCompat.npcId(npc);
 
         if (!npcId.isBlank()) {
-            QuestManager.recordTalk(player, npcId);
+            QuestManager.recordTalk(
+                player,
+                npcId
+            );
         }
 
         Set<ResourceLocation> mergedBindings =
@@ -72,68 +79,40 @@ public final class QuestNpcInteraction {
                     player,
                     npcId
                 );
-                QuestManager.refreshDynamicObjectives(player);
+
+                QuestManager.refreshDynamicObjectives(
+                    player
+                );
 
                 if (QuestManager.isReadyToTurnIn(
                         player,
                         quest
                     )) {
-                    return QuestManager.turnIn(
+                    QuestManager.turnIn(
                         player,
                         questId,
                         false
                     );
                 }
 
-                player.sendSystemMessage(
-                    Component.literal(
-                        quest.title() + " — In Progress"
-                    ).withStyle(ChatFormatting.YELLOW)
-                );
-
-                for (String line
-                        : QuestManager.progressLines(
-                            player,
-                            quest
-                        )) {
-                    player.sendSystemMessage(
-                        Component.literal("• " + line)
-                            .withStyle(
-                                ChatFormatting.GRAY
-                            )
-                    );
-                }
-
-                return true;
+                // An active bound quest is enough for this interaction.
+                // Do not block the NPC's own dialogue or other behaviour.
+                return;
             }
 
-            if (QuestManager.canStart(player, quest)) {
-                return QuestManager.start(
+            if (QuestManager.canStart(
+                    player,
+                    quest
+                )) {
+                QuestManager.start(
                     player,
                     questId,
                     false
                 );
+
+                // Start at most one bound quest per interaction.
+                return;
             }
         }
-
-        if (!bindings.isEmpty()) {
-            player.sendSystemMessage(
-                Component.literal(
-                    "This NPC has no quest available for you right now."
-                ).withStyle(ChatFormatting.GRAY)
-            );
-            return true;
-        }
-
-        if (CyberNpcQuestCompat.isQuestNpc(npc)) {
-            player.sendSystemMessage(
-                Component.literal(
-                    "This Quest NPC has no CyberQuest quest bound to it yet."
-                ).withStyle(ChatFormatting.GRAY)
-            );
-            return true;
-        }
-
-        return !npcId.isBlank();
     }
 }

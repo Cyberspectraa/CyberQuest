@@ -8,7 +8,6 @@ import com.cyberspectraa.cyberquest.quest.QuestNpcInteraction;
 import com.cyberspectraa.cyberquest.quest.QuestRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -120,16 +119,9 @@ public final class QuestForgeEvents {
             return;
         }
 
-        if (!QuestNpcInteraction.handle(
-                player,
-                event.getTarget()
-        )) {
-            return;
-        }
-
-        event.setCancellationResult(
-            InteractionResult.SUCCESS
+        QuestNpcInteraction.handle(
+            player,
+            event.getTarget()
         );
-        event.setCanceled(true);
     }
 }

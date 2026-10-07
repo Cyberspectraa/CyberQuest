@@ -77,6 +77,7 @@ public record QuestObjectiveDefinition(
                     + (npc.isBlank() ? "" : " to " + npc);
             case VISIT -> "Visit the marked location";
             case ADVANCEMENT -> "Earn advancement " + target;
+            case DISCOVER -> "Discover " + target;
         };
     }
 

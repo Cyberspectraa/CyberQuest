@@ -8,7 +8,8 @@ public enum QuestObjectiveType {
     TALK,
     DELIVER_ITEM,
     VISIT,
-    ADVANCEMENT;
+    ADVANCEMENT,
+    DISCOVER;
 
     public static QuestObjectiveType fromString(String value) {
         if (value == null || value.isBlank()) {
