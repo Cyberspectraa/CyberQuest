@@ -13,18 +13,6 @@ import java.util.List;
 import java.util.Locale;
 
 public final class QuestJournalScreen extends Screen {
-    private static final int LEATHER = 0xFF2A1B13;
-    private static final int LEATHER_DARK = 0xFF120B08;
-    private static final int LEATHER_RED = 0xFF5B2A22;
-    private static final int GOLD = 0xFFB58A43;
-    private static final int GOLD_DARK = 0xFF6E4E25;
-    private static final int PARCHMENT = 0xFFD7C294;
-    private static final int PARCHMENT_DARK = 0xFFC1A979;
-    private static final int PARCHMENT_LIGHT = 0xFFE4D2A7;
-    private static final int INK = 0xFF342419;
-    private static final int INK_FADED = 0xFF6B543C;
-    private static final int WAX = 0xFF792D28;
-
     private JournalTab tab = JournalTab.JOURNAL;
     private int selected;
 
@@ -39,21 +27,19 @@ public final class QuestJournalScreen extends Screen {
         int mouseY,
         float partialTick
     ) {
-        renderBackground(graphics);
+        GuiTheme.screenBackdrop(
+            graphics,
+            width,
+            height
+        );
 
         Layout layout = layout();
 
-        drawBook(
-            graphics,
-            layout.left(),
-            layout.top(),
-            layout.right(),
-            layout.bottom()
-        );
-
+        drawBook(graphics, layout);
         drawTabs(graphics, layout, mouseX, mouseY);
 
-        List<JournalEntry> entries = visibleEntries();
+        List<JournalEntry> entries =
+            visibleEntries();
 
         if (entries.isEmpty()) {
             selected = 0;
@@ -83,12 +69,15 @@ public final class QuestJournalScreen extends Screen {
             );
         }
 
-        graphics.drawCenteredString(
+        graphics.drawString(
             font,
-            Component.literal("J"),
-            layout.right() - 14,
-            layout.bottom() - 15,
-            INK_FADED
+            Component.literal(
+                "J: close journal"
+            ),
+            layout.right() - 91,
+            layout.bottom() - 14,
+            GuiTheme.INK_MUTED,
+            false
         );
 
         super.render(
@@ -96,6 +85,25 @@ public final class QuestJournalScreen extends Screen {
             mouseX,
             mouseY,
             partialTick
+        );
+    }
+
+    @Override
+    public boolean keyPressed(
+        int keyCode,
+        int scanCode,
+        int modifiers
+    ) {
+        if (ClientKeyMappings.QUEST_JOURNAL
+                .matches(keyCode, scanCode)) {
+            onClose();
+            return true;
+        }
+
+        return super.keyPressed(
+            keyCode,
+            scanCode,
+            modifiers
         );
     }
 
@@ -117,10 +125,10 @@ public final class QuestJournalScreen extends Screen {
 
         JournalTab[] tabs = JournalTab.values();
         int tabWidth = Math.max(
-            60,
-            (layout.width() - 34) / tabs.length
+            64,
+            (layout.width() - 42) / tabs.length
         );
-        int tabY = layout.top() - 17;
+        int tabY = layout.top() - 16;
 
         for (int i = 0; i < tabs.length; i++) {
             int x = layout.left() + 12
@@ -131,8 +139,8 @@ public final class QuestJournalScreen extends Screen {
                     mouseY,
                     x,
                     tabY,
-                    x + tabWidth - 4,
-                    layout.top() + 4
+                    x + tabWidth - 5,
+                    layout.top() + 5
             )) {
                 tab = tabs[i];
                 selected = 0;
@@ -140,24 +148,25 @@ public final class QuestJournalScreen extends Screen {
             }
         }
 
-        List<JournalEntry> entries = visibleEntries();
-        int listTop = layout.top() + 34;
-        int rowHeight = 23;
+        List<JournalEntry> entries =
+            visibleEntries();
+        int listTop = layout.contentTop() + 22;
+        int rowHeight = 25;
 
         for (int i = 0; i < entries.size(); i++) {
             int y = listTop + i * rowHeight;
 
-            if (y > layout.bottom() - 28) {
+            if (y > layout.bottom() - 34) {
                 break;
             }
 
             if (inside(
                     mouseX,
                     mouseY,
-                    layout.left() + 13,
+                    layout.left() + 15,
                     y,
-                    layout.seam() - 8,
-                    y + rowHeight - 3
+                    layout.seam() - 10,
+                    y + rowHeight - 4
             )) {
                 selected = i;
                 return true;
@@ -175,11 +184,13 @@ public final class QuestJournalScreen extends Screen {
                 )
             );
 
-            if (!"COMPLETED".equals(entry.status())) {
-                int buttonWidth = 76;
+            if (!"COMPLETED".equals(
+                    entry.status()
+            )) {
+                int buttonWidth = 82;
                 int x = layout.right()
                     - buttonWidth - 18;
-                int y = layout.bottom() - 31;
+                int y = layout.bottom() - 36;
 
                 if (inside(
                         mouseX,
@@ -187,7 +198,7 @@ public final class QuestJournalScreen extends Screen {
                         x,
                         y,
                         x + buttonWidth,
-                        y + 18
+                        y + 20
                 )) {
                     QuestNetwork.sendToServer(
                         new SetTrackedQuestPacket(
@@ -215,85 +226,68 @@ public final class QuestJournalScreen extends Screen {
 
     private void drawBook(
         GuiGraphics graphics,
-        int left,
-        int top,
-        int right,
-        int bottom
+        Layout layout
     ) {
-        graphics.fill(
-            left - 6,
-            top - 5,
-            right + 6,
-            bottom + 6,
-            LEATHER_DARK
-        );
-        graphics.fill(
-            left - 3,
-            top - 2,
-            right + 3,
-            bottom + 3,
-            LEATHER
-        );
-        graphics.fill(
-            left,
-            top,
-            right,
-            bottom,
-            GOLD_DARK
-        );
-        graphics.fill(
-            left + 2,
-            top + 2,
-            right - 2,
-            bottom - 2,
-            PARCHMENT_DARK
-        );
-        graphics.fill(
-            left + 6,
-            top + 6,
-            right - 6,
-            bottom - 6,
-            PARCHMENT
+        GuiTheme.woodPanel(
+            graphics,
+            layout.left(),
+            layout.top(),
+            layout.width(),
+            layout.height()
         );
 
-        int seam = (left + right) / 2;
-
-        graphics.fill(
-            seam - 2,
-            top + 7,
-            seam + 2,
-            bottom - 7,
-            0x553F2A1B
-        );
-        graphics.fill(
-            seam,
-            top + 7,
-            seam + 1,
-            bottom - 7,
-            0x337B5D37
+        GuiTheme.parchmentPanel(
+            graphics,
+            layout.left() + 9,
+            layout.contentTop(),
+            layout.leftPageWidth(),
+            layout.contentHeight()
         );
 
-        for (int[] corner : new int[][]{
-            {left + 3, top + 3},
-            {right - 7, top + 3},
-            {left + 3, bottom - 7},
-            {right - 7, bottom - 7}
-        }) {
-            graphics.fill(
-                corner[0],
-                corner[1],
-                corner[0] + 4,
-                corner[1] + 4,
-                GOLD
-            );
-        }
+        GuiTheme.parchmentPanel(
+            graphics,
+            layout.seam() + 4,
+            layout.contentTop(),
+            layout.rightPageWidth(),
+            layout.contentHeight()
+        );
 
-        graphics.drawCenteredString(
+        GuiTheme.banner(
+            graphics,
+            layout.left() + 14,
+            layout.top() + 8,
+            layout.width() - 28,
+            22
+        );
+
+        graphics.drawString(
             font,
-            Component.literal("Adventurer's Journal"),
-            seam,
-            top + 12,
-            INK
+            Component.literal(
+                "ADVENTURER'S JOURNAL"
+            ),
+            layout.left() + 26,
+            layout.top() + 15,
+            GuiTheme.GOLD,
+            false
+        );
+
+        graphics.drawString(
+            font,
+            Component.literal(
+                "Living Threads"
+            ),
+            layout.right() - 96,
+            layout.top() + 15,
+            GuiTheme.TEXT_MUTED,
+            false
+        );
+
+        graphics.fill(
+            layout.seam(),
+            layout.contentTop() + 7,
+            layout.seam() + 1,
+            layout.bottom() - 18,
+            0x665D4228
         );
     }
 
@@ -305,16 +299,17 @@ public final class QuestJournalScreen extends Screen {
     ) {
         JournalTab[] tabs = JournalTab.values();
         int tabWidth = Math.max(
-            60,
-            (layout.width() - 34) / tabs.length
+            64,
+            (layout.width() - 42) / tabs.length
         );
-        int tabY = layout.top() - 17;
+        int tabY = layout.top() - 16;
 
         for (int i = 0; i < tabs.length; i++) {
             JournalTab value = tabs[i];
             int x = layout.left() + 12
                 + i * tabWidth;
-            int right = x + tabWidth - 4;
+            int right = x + tabWidth - 5;
+
             boolean selectedTab = value == tab;
             boolean hovered = inside(
                 mouseX,
@@ -322,26 +317,17 @@ public final class QuestJournalScreen extends Screen {
                 x,
                 tabY,
                 right,
-                layout.top() + 4
+                layout.top() + 5
             );
 
-            graphics.fill(
+            GuiTheme.button(
+                graphics,
                 x,
                 tabY,
-                right,
-                layout.top() + 4,
+                right - x,
+                21,
+                hovered,
                 selectedTab
-                    ? LEATHER_RED
-                    : LEATHER
-            );
-            graphics.fill(
-                x + 2,
-                tabY + 2,
-                right - 2,
-                tabY + 3,
-                hovered || selectedTab
-                    ? GOLD
-                    : GOLD_DARK
             );
 
             graphics.drawCenteredString(
@@ -350,8 +336,8 @@ public final class QuestJournalScreen extends Screen {
                 (x + right) / 2,
                 tabY + 7,
                 selectedTab
-                    ? 0xFFFFE6AD
-                    : 0xFFD8C28F
+                    ? GuiTheme.GOLD
+                    : GuiTheme.TEXT_LIGHT
             );
         }
     }
@@ -363,22 +349,22 @@ public final class QuestJournalScreen extends Screen {
         int mouseX,
         int mouseY
     ) {
-        int x = layout.left() + 13;
-        int right = layout.seam() - 8;
-        int y = layout.top() + 34;
-        int rowHeight = 23;
+        int x = layout.left() + 15;
+        int right = layout.seam() - 10;
+        int y = layout.contentTop() + 22;
+        int rowHeight = 25;
 
         graphics.drawString(
             font,
             Component.literal(tab.heading),
             x,
-            layout.top() + 24,
-            INK_FADED,
+            layout.contentTop() + 9,
+            GuiTheme.INK_MUTED,
             false
         );
 
         for (int i = 0; i < entries.size(); i++) {
-            if (y > layout.bottom() - 28) {
+            if (y > layout.bottom() - 34) {
                 break;
             }
 
@@ -390,31 +376,17 @@ public final class QuestJournalScreen extends Screen {
                 x,
                 y,
                 right,
-                y + rowHeight - 3
+                y + rowHeight - 4
             );
 
-            if (current || hovered) {
-                graphics.fill(
-                    x - 3,
-                    y - 2,
-                    right,
-                    y + rowHeight - 3,
-                    current
-                        ? 0x664E2D20
-                        : 0x335C3B29
-                );
-            }
-
-            graphics.fill(
+            GuiTheme.button(
+                graphics,
                 x - 3,
                 y - 2,
-                x - 1,
-                y + rowHeight - 3,
-                entry.tracked()
-                    ? GOLD
-                    : (current
-                        ? WAX
-                        : 0x445A442D)
+                right - x + 3,
+                rowHeight - 1,
+                hovered,
+                current
             );
 
             String marker = switch (
@@ -423,7 +395,7 @@ public final class QuestJournalScreen extends Screen {
                 )
             ) {
                 case "story" -> "◆";
-                case "contract" -> "§";
+                case "contract" -> "✦";
                 case "rumour", "rumor" -> "?";
                 default -> "•";
             };
@@ -431,23 +403,25 @@ public final class QuestJournalScreen extends Screen {
             graphics.drawString(
                 font,
                 Component.literal(marker),
-                x + 1,
-                y + 4,
-                current ? WAX : INK_FADED,
+                x + 4,
+                y + 5,
+                entry.tracked()
+                    ? GuiTheme.GOLD
+                    : GuiTheme.WAX,
                 false
             );
 
             String title = trimToWidth(
                 entry.title(),
-                Math.max(30, right - x - 20)
+                Math.max(30, right - x - 28)
             );
 
             graphics.drawString(
                 font,
                 Component.literal(title),
-                x + 13,
-                y + 2,
-                INK,
+                x + 17,
+                y + 3,
+                GuiTheme.TEXT_LIGHT,
                 false
             );
 
@@ -458,9 +432,9 @@ public final class QuestJournalScreen extends Screen {
             graphics.drawString(
                 font,
                 Component.literal(sub),
-                x + 13,
-                y + 12,
-                INK_FADED,
+                x + 17,
+                y + 13,
+                GuiTheme.TEXT_MUTED,
                 false
             );
 
@@ -475,17 +449,17 @@ public final class QuestJournalScreen extends Screen {
         int mouseX,
         int mouseY
     ) {
-        int x = layout.seam() + 12;
-        int right = layout.right() - 14;
+        int x = layout.seam() + 17;
+        int right = layout.right() - 18;
         int textWidth = Math.max(80, right - x);
-        int y = layout.top() + 34;
+        int y = layout.contentTop() + 12;
 
         graphics.drawString(
             font,
             Component.literal(entry.title()),
             x,
             y,
-            INK,
+            GuiTheme.INK,
             false
         );
         y += 13;
@@ -512,7 +486,7 @@ public final class QuestJournalScreen extends Screen {
             ),
             x,
             y,
-            WAX,
+            GuiTheme.WAX,
             false
         );
         y += 15;
@@ -523,7 +497,7 @@ public final class QuestJournalScreen extends Screen {
             x,
             y,
             textWidth,
-            INK_FADED,
+            GuiTheme.INK_MUTED,
             4
         );
 
@@ -548,8 +522,8 @@ public final class QuestJournalScreen extends Screen {
                 x,
                 y,
                 textWidth,
-                INK,
-                7
+                GuiTheme.INK,
+                8
             );
             return;
         }
@@ -580,17 +554,17 @@ public final class QuestJournalScreen extends Screen {
                 x,
                 y,
                 textWidth,
-                INK,
+                GuiTheme.INK,
                 2
             );
 
-            if (y > layout.bottom() - 92) {
+            if (y > layout.bottom() - 99) {
                 break;
             }
         }
 
         for (String objective : entry.objectives()) {
-            if (y > layout.bottom() - 92) {
+            if (y > layout.bottom() - 99) {
                 break;
             }
 
@@ -600,12 +574,12 @@ public final class QuestJournalScreen extends Screen {
                 x,
                 y,
                 textWidth,
-                0xFF5D4932,
+                GuiTheme.INK_MUTED,
                 2
             );
         }
 
-        if (y <= layout.bottom() - 72) {
+        if (y <= layout.bottom() - 76) {
             y += 4;
             y = drawSectionTitle(
                 graphics,
@@ -623,47 +597,35 @@ public final class QuestJournalScreen extends Screen {
                 x,
                 y,
                 textWidth,
-                INK,
+                GuiTheme.INK,
                 3
             );
         }
 
-        int buttonWidth = 76;
+        int buttonWidth = 82;
         int buttonX =
             layout.right() - buttonWidth - 18;
-        int buttonY = layout.bottom() - 31;
+        int buttonY = layout.bottom() - 36;
+
         boolean hovered = inside(
             mouseX,
             mouseY,
             buttonX,
             buttonY,
             buttonX + buttonWidth,
-            buttonY + 18
+            buttonY + 20
         );
 
-        graphics.fill(
+        GuiTheme.button(
+            graphics,
             buttonX,
             buttonY,
-            buttonX + buttonWidth,
-            buttonY + 18,
-            LEATHER_DARK
-        );
-        graphics.fill(
-            buttonX + 1,
-            buttonY + 1,
-            buttonX + buttonWidth - 1,
-            buttonY + 17,
+            buttonWidth,
+            20,
+            hovered,
             entry.tracked()
-                ? LEATHER_RED
-                : LEATHER
         );
-        graphics.fill(
-            buttonX + 3,
-            buttonY + 2,
-            buttonX + buttonWidth - 3,
-            buttonY + 3,
-            hovered ? GOLD : GOLD_DARK
-        );
+
         graphics.drawCenteredString(
             font,
             Component.literal(
@@ -673,7 +635,7 @@ public final class QuestJournalScreen extends Screen {
             ),
             buttonX + buttonWidth / 2,
             buttonY + 6,
-            0xFFFFE5A8
+            GuiTheme.TEXT_LIGHT
         );
     }
 
@@ -690,12 +652,14 @@ public final class QuestJournalScreen extends Screen {
                 "Your chronicle is still waiting for its first tale.";
         };
 
-        graphics.drawCenteredString(
+        GuiTheme.centered(
+            graphics,
             font,
             Component.literal(message),
             (layout.left() + layout.right()) / 2,
-            layout.top() + layout.height() / 2,
-            INK_FADED
+            layout.contentTop()
+                + layout.contentHeight() / 2,
+            GuiTheme.INK_MUTED
         );
     }
 
@@ -706,20 +670,20 @@ public final class QuestJournalScreen extends Screen {
         int y,
         int right
     ) {
-        graphics.fill(
-            x,
-            y + 10,
-            right,
-            y + 11,
-            0x556E4E25
-        );
         graphics.drawString(
             font,
             Component.literal(title),
             x,
             y,
-            WAX,
+            GuiTheme.WAX,
             false
+        );
+        graphics.fill(
+            x,
+            y + 10,
+            right,
+            y + 11,
+            0x775D4228
         );
         return y + 14;
     }
@@ -779,15 +743,15 @@ public final class QuestJournalScreen extends Screen {
 
     private Layout layout() {
         int bookWidth = Math.min(
-            620,
-            Math.max(270, width - 34)
+            700,
+            Math.max(300, width - 30)
         );
         int bookHeight = Math.min(
-            360,
-            Math.max(190, height - 52)
+            390,
+            Math.max(205, height - 48)
         );
         int left = (width - bookWidth) / 2;
-        int top = (height - bookHeight) / 2 + 6;
+        int top = (height - bookHeight) / 2 + 5;
 
         return new Layout(
             left,
@@ -869,16 +833,12 @@ public final class QuestJournalScreen extends Screen {
         ) {
             return switch (this) {
                 case JOURNAL ->
-                    "journal".equals(
-                        entry.section()
-                    )
+                    "journal".equals(entry.section())
                     && !"COMPLETED".equals(
                         entry.status()
                     );
                 case RUMOURS ->
-                    "rumour".equals(
-                        entry.section()
-                    )
+                    "rumour".equals(entry.section())
                     && !"COMPLETED".equals(
                         entry.status()
                     );
@@ -909,6 +869,22 @@ public final class QuestJournalScreen extends Screen {
 
         private int seam() {
             return left + width() * 42 / 100;
+        }
+
+        private int contentTop() {
+            return top + 34;
+        }
+
+        private int contentHeight() {
+            return bottom - contentTop() - 9;
+        }
+
+        private int leftPageWidth() {
+            return seam() - left - 13;
+        }
+
+        private int rightPageWidth() {
+            return right - seam() - 13;
         }
     }
 }
