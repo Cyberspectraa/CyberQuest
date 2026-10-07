@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0-alpha.3
+
+### Landscape Guild Board correction
+- Rotated the physical Guild Board from 2 blocks wide by 3 blocks tall to the intended 3 blocks wide by 2 blocks tall landscape orientation.
+- Kept the same six clickable contract positions and daily 4-6 notice generation, but redistributed the papers across the wider board.
+- Rebuilt the outer frame models so the dark-oak border correctly surrounds the new 3x2 footprint.
+- Kept the existing serialized board-part names so older worlds can still read the block states instead of failing on removed enum values.
+- The board remains thin, wall-mounted, multiplayer-safe, individually clickable, and uses the same parchment/bounty/sealed notice styles.
+
 ## 0.3.0-alpha.2
 
 ### Physical 2x3 Guild Quest Board
