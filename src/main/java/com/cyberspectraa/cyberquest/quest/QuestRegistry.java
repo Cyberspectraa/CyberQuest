@@ -53,9 +53,15 @@ public final class QuestRegistry
                     entry.getValue().getAsJsonObject()
                 );
 
-                if (quest.objectives().isEmpty()) {
+                boolean hasObjectives =
+                    quest.stages().stream()
+                        .anyMatch(stage ->
+                            !stage.objectives().isEmpty()
+                        );
+
+                if (!hasObjectives) {
                     CyberQuest.LOGGER.warn(
-                        "Quest {} has no objectives",
+                        "Quest {} has no stage objectives",
                         entry.getKey()
                     );
                 }
