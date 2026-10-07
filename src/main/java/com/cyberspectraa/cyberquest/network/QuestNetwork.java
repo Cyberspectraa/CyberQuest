@@ -126,13 +126,20 @@ public final class QuestNetwork {
         List<ProceduralQuestOffer> offers =
             GuildContractGenerator.offers(level, pos);
 
+        long day =
+            level.getDayTime() / 24000L;
+
         for (int slot = 0; slot < offers.size(); slot++) {
             ProceduralQuestOffer offer = offers.get(slot);
 
             String state =
                 PlayerQuestData.isActive(player, offer.id())
                     ? "ACTIVE"
-                    : PlayerQuestData.isCompleted(player, offer.id())
+                    : PlayerQuestData.hasGuildOfferTaken(
+                        player,
+                        offer.id(),
+                        day
+                    )
                         ? "COMPLETED"
                         : "AVAILABLE";
 
