@@ -32,12 +32,8 @@ public record JournalEntry(
         completionText = safe(completionText);
         stageNumber = Math.max(0, stageNumber);
         stageCount = Math.max(0, stageCount);
-        notes = notes == null
-            ? List.of()
-            : List.copyOf(notes);
-        objectives = objectives == null
-            ? List.of()
-            : List.copyOf(objectives);
+        notes = notes == null ? List.of() : List.copyOf(notes);
+        objectives = objectives == null ? List.of() : List.copyOf(objectives);
     }
 
     private static String safe(String value) {

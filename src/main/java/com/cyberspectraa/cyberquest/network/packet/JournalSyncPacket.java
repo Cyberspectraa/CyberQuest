@@ -16,9 +16,7 @@ public record JournalSyncPacket(
     List<JournalEntry> entries
 ) {
     public JournalSyncPacket {
-        entries = entries == null
-            ? List.of()
-            : List.copyOf(entries);
+        entries = entries == null ? List.of() : List.copyOf(entries);
     }
 
     public static void encode(
@@ -42,19 +40,8 @@ public record JournalSyncPacket(
             buffer.writeVarInt(entry.stageCount());
             buffer.writeUtf(entry.completionText(), 2048);
             buffer.writeBoolean(entry.tracked());
-
-            writeStrings(
-                buffer,
-                entry.notes(),
-                128,
-                1024
-            );
-            writeStrings(
-                buffer,
-                entry.objectives(),
-                128,
-                512
-            );
+            writeStrings(buffer, entry.notes(), 128, 1024);
+            writeStrings(buffer, entry.objectives(), 128, 512);
         }
     }
 
@@ -62,82 +49,39 @@ public record JournalSyncPacket(
         FriendlyByteBuf buffer
     ) {
         boolean open = buffer.readBoolean();
-        int size = Math.min(
-            512,
-            Math.max(0, buffer.readVarInt())
-        );
-
-        List<JournalEntry> entries =
-            new ArrayList<>();
+        int size = Math.min(512, Math.max(0, buffer.readVarInt()));
+        List<JournalEntry> entries = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            String id = buffer.readUtf(128);
-            String title = buffer.readUtf(256);
-            String description =
-                buffer.readUtf(2048);
-            String category = buffer.readUtf(64);
-            String section = buffer.readUtf(32);
-            String status = buffer.readUtf(32);
-            String currentLead =
-                buffer.readUtf(1024);
-            String timer = buffer.readUtf(128);
-            String stageTitle =
-                buffer.readUtf(256);
-            int stageNumber =
-                Math.max(0, buffer.readVarInt());
-            int stageCount =
-                Math.max(0, buffer.readVarInt());
-            String completionText =
-                buffer.readUtf(2048);
-            boolean tracked =
-                buffer.readBoolean();
-
-            List<String> notes =
-                readStrings(
-                    buffer,
-                    128,
-                    1024
-                );
-            List<String> objectives =
-                readStrings(
-                    buffer,
-                    128,
-                    512
-                );
-
             entries.add(
                 new JournalEntry(
-                    id,
-                    title,
-                    description,
-                    category,
-                    section,
-                    status,
-                    currentLead,
-                    timer,
-                    stageTitle,
-                    stageNumber,
-                    stageCount,
-                    completionText,
-                    notes,
-                    objectives,
-                    tracked
+                    buffer.readUtf(128),
+                    buffer.readUtf(256),
+                    buffer.readUtf(2048),
+                    buffer.readUtf(64),
+                    buffer.readUtf(32),
+                    buffer.readUtf(32),
+                    buffer.readUtf(1024),
+                    buffer.readUtf(128),
+                    buffer.readUtf(256),
+                    Math.max(0, buffer.readVarInt()),
+                    Math.max(0, buffer.readVarInt()),
+                    buffer.readUtf(2048),
+                    readStrings(buffer, 128, 1024),
+                    readStrings(buffer, 128, 512),
+                    buffer.readBoolean()
                 )
             );
         }
 
-        return new JournalSyncPacket(
-            open,
-            entries
-        );
+        return new JournalSyncPacket(open, entries);
     }
 
     public static void handle(
         JournalSyncPacket packet,
         Supplier<NetworkEvent.Context> contextSupplier
     ) {
-        NetworkEvent.Context context =
-            contextSupplier.get();
+        NetworkEvent.Context context = contextSupplier.get();
 
         DistExecutor.unsafeRunWhenOn(
             Dist.CLIENT,
@@ -156,18 +100,11 @@ public record JournalSyncPacket(
         int maximumCount,
         int maximumLength
     ) {
-        int size = Math.min(
-            maximumCount,
-            values.size()
-        );
-
+        int size = Math.min(maximumCount, values.size());
         buffer.writeVarInt(size);
 
         for (int i = 0; i < size; i++) {
-            buffer.writeUtf(
-                values.get(i),
-                maximumLength
-            );
+            buffer.writeUtf(values.get(i), maximumLength);
         }
     }
 
@@ -178,21 +115,12 @@ public record JournalSyncPacket(
     ) {
         int size = Math.min(
             maximumCount,
-            Math.max(
-                0,
-                buffer.readVarInt()
-            )
+            Math.max(0, buffer.readVarInt())
         );
-
-        List<String> values =
-            new ArrayList<>();
+        List<String> values = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            values.add(
-                buffer.readUtf(
-                    maximumLength
-                )
-            );
+            values.add(buffer.readUtf(maximumLength));
         }
 
         return values;

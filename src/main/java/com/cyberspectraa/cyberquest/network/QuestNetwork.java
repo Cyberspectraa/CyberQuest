@@ -30,10 +30,7 @@ public final class QuestNetwork {
 
     public static final SimpleChannel CHANNEL =
         NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(
-                CyberQuest.MOD_ID,
-                "main"
-            ),
+            new ResourceLocation(CyberQuest.MOD_ID, "main"),
             () -> PROTOCOL,
             PROTOCOL::equals,
             PROTOCOL::equals
@@ -109,9 +106,7 @@ public final class QuestNetwork {
         }
 
         CHANNEL.send(
-            PacketDistributor.PLAYER.with(
-                () -> player
-            ),
+            PacketDistributor.PLAYER.with(() -> player),
             new JournalSyncPacket(
                 open,
                 buildEntries(player)
@@ -123,43 +118,27 @@ public final class QuestNetwork {
         ServerPlayer player,
         BlockPos pos
     ) {
-        if (!(player.level()
-                instanceof ServerLevel level)) {
+        if (!(player.level() instanceof ServerLevel level)) {
             return;
         }
 
-        List<GuildBoardOfferData> data =
-            new ArrayList<>();
-
+        List<GuildBoardOfferData> result = new ArrayList<>();
         List<ProceduralQuestOffer> offers =
-            GuildContractGenerator.offers(
-                level,
-                pos
-            );
+            GuildContractGenerator.offers(level, pos);
 
-        for (int slot = 0;
-                slot < offers.size();
-                slot++) {
-            ProceduralQuestOffer offer =
-                offers.get(slot);
+        for (int slot = 0; slot < offers.size(); slot++) {
+            ProceduralQuestOffer offer = offers.get(slot);
 
             String state =
-                PlayerQuestData.isActive(
-                    player,
-                    offer.id()
-                )
+                PlayerQuestData.isActive(player, offer.id())
                     ? "ACTIVE"
-                    : PlayerQuestData.isCompleted(
-                        player,
-                        offer.id()
-                    )
+                    : PlayerQuestData.isCompleted(player, offer.id())
                         ? "COMPLETED"
                         : "AVAILABLE";
 
             String reward =
                 "+" + offer.rewardGuildReputation()
-                    + " guild rep"
-                    + "  •  "
+                    + " guild rep • "
                     + offer.silverCoins()
                     + " silver";
 
@@ -167,18 +146,14 @@ public final class QuestNetwork {
                 offer.durationDays() <= 0
                     ? ""
                     : offer.durationDays()
-                        + (offer.durationDays() == 1
-                            ? " day"
-                            : " days");
+                        + (offer.durationDays() == 1 ? " day" : " days");
 
             String penalty =
                 offer.failureGuildReputation() <= 0
                     ? ""
-                    : "Fail: -"
-                        + offer.failureGuildReputation()
-                        + " rep";
+                    : "Fail: -" + offer.failureGuildReputation() + " rep";
 
-            data.add(
+            result.add(
                 new GuildBoardOfferData(
                     slot,
                     offer.id().toString(),
@@ -193,15 +168,11 @@ public final class QuestNetwork {
         }
 
         CHANNEL.send(
-            PacketDistributor.PLAYER.with(
-                () -> player
-            ),
+            PacketDistributor.PLAYER.with(() -> player),
             new OpenGuildBoardPacket(
                 pos,
-                PlayerQuestData.guildReputation(
-                    player
-                ),
-                data
+                PlayerQuestData.guildReputation(player),
+                result
             )
         );
     }
@@ -209,18 +180,12 @@ public final class QuestNetwork {
     private static List<JournalEntry> buildEntries(
         ServerPlayer player
     ) {
-        List<JournalEntry> result =
-            new ArrayList<>();
+        List<JournalEntry> result = new ArrayList<>();
 
         for (ResourceLocation questId
-                : PlayerQuestData.activeIds(
-                    player
-                )) {
+                : PlayerQuestData.activeIds(player)) {
             QuestDefinition quest =
-                QuestResolver.get(
-                    player,
-                    questId
-                ).orElse(null);
+                QuestResolver.get(player, questId).orElse(null);
 
             if (quest == null) {
                 continue;
@@ -233,59 +198,30 @@ public final class QuestNetwork {
                     quest.description(),
                     quest.category(),
                     quest.journalSection(),
-                    QuestManager.isReadyToTurnIn(
-                        player,
-                        quest
-                    )
+                    QuestManager.isReadyToTurnIn(player, quest)
                         ? "READY"
                         : "ACTIVE",
-                    QuestManager.currentLead(
-                        player,
-                        quest
-                    ),
+                    QuestManager.currentLead(player, quest),
                     formatTimeRemaining(
-                        PlayerQuestData.timeRemaining(
-                            player,
-                            questId
-                        )
+                        PlayerQuestData.timeRemaining(player, questId)
                     ),
-                    QuestManager.stageTitle(
-                        player,
-                        quest
-                    ),
-                    QuestManager.stageNumber(
-                        player,
-                        quest
-                    ),
+                    QuestManager.stageTitle(player, quest),
+                    QuestManager.stageNumber(player, quest),
                     quest.stages().size(),
                     "",
-                    QuestManager.journalNotes(
-                        player,
-                        quest
-                    ),
-                    QuestManager.progressLines(
-                        player,
-                        quest
-                    ),
-                    PlayerQuestData.isTracked(
-                        player,
-                        questId
-                    )
+                    QuestManager.journalNotes(player, quest),
+                    QuestManager.progressLines(player, quest),
+                    PlayerQuestData.isTracked(player, questId)
                 )
             );
         }
 
-        // Procedural guild contracts deliberately do not fill the Chronicle.
-        // It remains a record of authored story/class adventures rather than
-        // thousands of repeating daily notices.
+        // Daily procedural jobs are intentionally omitted from Chronicle so it
+        // remains a readable history of authored story and class adventures.
         for (ResourceLocation questId
-                : PlayerQuestData.completedIds(
-                    player
-                )) {
+                : PlayerQuestData.completedIds(player)) {
             QuestDefinition quest =
-                QuestRegistry.get(
-                    questId
-                ).orElse(null);
+                QuestRegistry.get(questId).orElse(null);
 
             if (quest == null) {
                 continue;
@@ -315,9 +251,7 @@ public final class QuestNetwork {
         return result;
     }
 
-    private static String formatTimeRemaining(
-        long ticks
-    ) {
+    private static String formatTimeRemaining(long ticks) {
         if (ticks < 0L) {
             return "";
         }
@@ -327,23 +261,16 @@ public final class QuestNetwork {
         }
 
         long days = ticks / 24000L;
-        long remainder =
-            ticks % 24000L;
-        long hours = (remainder + 999L)
-            / 1000L;
+        long remainder = ticks % 24000L;
+        long hours = (remainder + 999L) / 1000L;
 
         if (days > 0L) {
             return days
-                + (days == 1L
-                    ? " day"
-                    : " days")
-                + (hours > 0L
-                    ? ", " + hours + "h"
-                    : "")
+                + (days == 1L ? " day" : " days")
+                + (hours > 0L ? ", " + hours + "h" : "")
                 + " remaining";
         }
 
-        return Math.max(1L, hours)
-            + "h remaining";
+        return Math.max(1L, hours) + "h remaining";
     }
 }
