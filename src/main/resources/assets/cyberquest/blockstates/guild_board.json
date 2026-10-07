@@ -1,7 +1,184 @@
 {
   "variants": {
-    "": {
-      "model": "cyberquest:block/guild_board"
+    "facing=north,has_paper=false,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left"
+    },
+    "facing=north,has_paper=true,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left_paper"
+    },
+    "facing=east,has_paper=false,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left",
+      "y": 90
+    },
+    "facing=east,has_paper=true,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left_paper",
+      "y": 90
+    },
+    "facing=south,has_paper=false,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left",
+      "y": 180
+    },
+    "facing=south,has_paper=true,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left_paper",
+      "y": 180
+    },
+    "facing=west,has_paper=false,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left",
+      "y": 270
+    },
+    "facing=west,has_paper=true,part=bottom_left": {
+      "model": "cyberquest:block/guild_board_bottom_left_paper",
+      "y": 270
+    },
+    "facing=north,has_paper=false,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right"
+    },
+    "facing=north,has_paper=true,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right_paper"
+    },
+    "facing=east,has_paper=false,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right",
+      "y": 90
+    },
+    "facing=east,has_paper=true,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right_paper",
+      "y": 90
+    },
+    "facing=south,has_paper=false,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right",
+      "y": 180
+    },
+    "facing=south,has_paper=true,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right_paper",
+      "y": 180
+    },
+    "facing=west,has_paper=false,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right",
+      "y": 270
+    },
+    "facing=west,has_paper=true,part=bottom_right": {
+      "model": "cyberquest:block/guild_board_bottom_right_paper",
+      "y": 270
+    },
+    "facing=north,has_paper=false,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left"
+    },
+    "facing=north,has_paper=true,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left_paper"
+    },
+    "facing=east,has_paper=false,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left",
+      "y": 90
+    },
+    "facing=east,has_paper=true,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left_paper",
+      "y": 90
+    },
+    "facing=south,has_paper=false,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left",
+      "y": 180
+    },
+    "facing=south,has_paper=true,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left_paper",
+      "y": 180
+    },
+    "facing=west,has_paper=false,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left",
+      "y": 270
+    },
+    "facing=west,has_paper=true,part=middle_left": {
+      "model": "cyberquest:block/guild_board_middle_left_paper",
+      "y": 270
+    },
+    "facing=north,has_paper=false,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right"
+    },
+    "facing=north,has_paper=true,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right_paper"
+    },
+    "facing=east,has_paper=false,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right",
+      "y": 90
+    },
+    "facing=east,has_paper=true,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right_paper",
+      "y": 90
+    },
+    "facing=south,has_paper=false,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right",
+      "y": 180
+    },
+    "facing=south,has_paper=true,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right_paper",
+      "y": 180
+    },
+    "facing=west,has_paper=false,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right",
+      "y": 270
+    },
+    "facing=west,has_paper=true,part=middle_right": {
+      "model": "cyberquest:block/guild_board_middle_right_paper",
+      "y": 270
+    },
+    "facing=north,has_paper=false,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left"
+    },
+    "facing=north,has_paper=true,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left_paper"
+    },
+    "facing=east,has_paper=false,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left",
+      "y": 90
+    },
+    "facing=east,has_paper=true,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left_paper",
+      "y": 90
+    },
+    "facing=south,has_paper=false,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left",
+      "y": 180
+    },
+    "facing=south,has_paper=true,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left_paper",
+      "y": 180
+    },
+    "facing=west,has_paper=false,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left",
+      "y": 270
+    },
+    "facing=west,has_paper=true,part=top_left": {
+      "model": "cyberquest:block/guild_board_top_left_paper",
+      "y": 270
+    },
+    "facing=north,has_paper=false,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right"
+    },
+    "facing=north,has_paper=true,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right_paper"
+    },
+    "facing=east,has_paper=false,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right",
+      "y": 90
+    },
+    "facing=east,has_paper=true,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right_paper",
+      "y": 90
+    },
+    "facing=south,has_paper=false,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right",
+      "y": 180
+    },
+    "facing=south,has_paper=true,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right_paper",
+      "y": 180
+    },
+    "facing=west,has_paper=false,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right",
+      "y": 270
+    },
+    "facing=west,has_paper=true,part=top_right": {
+      "model": "cyberquest:block/guild_board_top_right_paper",
+      "y": 270
     }
   }
 }
