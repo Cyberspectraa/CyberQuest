@@ -9,12 +9,6 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 
 public final class QuestHudOverlay {
-    private static final int LEATHER = 0xD82A1B13;
-    private static final int LEATHER_DARK = 0xE0160E0A;
-    private static final int GOLD = 0xFFB58A43;
-    private static final int PARCHMENT = 0xE8D6BF8F;
-    private static final int INK = 0xFF342419;
-
     private QuestHudOverlay() {
     }
 
@@ -22,7 +16,8 @@ public final class QuestHudOverlay {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (minecraft.player == null
-                || minecraft.screen != null) {
+                || minecraft.screen != null
+                || minecraft.options.hideGui) {
             return;
         }
 
@@ -34,49 +29,40 @@ public final class QuestHudOverlay {
         }
 
         int width = Math.min(
-            210,
-            Math.max(150, graphics.guiWidth() / 3)
+            220,
+            Math.max(
+                160,
+                graphics.guiWidth() / 3
+            )
         );
-        int left = graphics.guiWidth() - width - 8;
+        int left =
+            graphics.guiWidth() - width - 8;
         int top = 8;
-        int right = graphics.guiWidth() - 8;
-        int bottom = top + 45;
 
-        graphics.fill(
-            left - 2,
-            top - 2,
-            right + 2,
-            bottom + 2,
-            LEATHER_DARK
-        );
-        graphics.fill(
+        GuiTheme.woodPanel(
+            graphics,
             left,
             top,
-            right,
-            bottom,
-            LEATHER
+            width,
+            50
         );
-        graphics.fill(
-            left + 3,
-            top + 3,
-            right - 3,
-            bottom - 3,
-            PARCHMENT
-        );
-        graphics.fill(
-            left + 3,
-            top + 3,
-            right - 3,
-            top + 4,
-            GOLD
+        GuiTheme.banner(
+            graphics,
+            left + 6,
+            top + 5,
+            width - 12,
+            16
         );
 
         graphics.drawString(
             minecraft.font,
-            Component.literal(entry.title()),
-            left + 8,
-            top + 8,
-            INK,
+            minecraft.font.plainSubstrByWidth(
+                entry.title().toUpperCase(),
+                width - 26
+            ),
+            left + 13,
+            top + 9,
+            GuiTheme.GOLD,
             false
         );
 
@@ -87,19 +73,20 @@ public final class QuestHudOverlay {
                         ? "Follow the trail."
                         : entry.currentLead()
                 ),
-                width - 16
+                width - 18
             );
 
-        int y = top + 22;
+        int y = top + 27;
+
         for (int i = 0;
                 i < Math.min(2, lead.size());
                 i++) {
             graphics.drawString(
                 minecraft.font,
                 lead.get(i),
-                left + 8,
+                left + 9,
                 y,
-                0xFF59402B,
+                GuiTheme.TEXT_MUTED,
                 false
             );
             y += 9;
