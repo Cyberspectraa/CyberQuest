@@ -2,6 +2,7 @@ package com.cyberspectraa.cyberquest.network;
 
 import com.cyberspectraa.cyberquest.CyberQuest;
 import com.cyberspectraa.cyberquest.guild.GuildContractGenerator;
+import com.cyberspectraa.cyberquest.guild.GuildBoardSavedData;
 import com.cyberspectraa.cyberquest.guild.ProceduralQuestOffer;
 import com.cyberspectraa.cyberquest.network.packet.AcceptGuildContractPacket;
 import com.cyberspectraa.cyberquest.network.packet.JournalSyncPacket;
@@ -137,7 +138,9 @@ public final class QuestNetwork {
             level.getDayTime() / 24000L;
 
         String state =
-            PlayerQuestData.isActive(player, offer.id())
+            GuildBoardSavedData.get(level).isRemoved(pos, slot)
+                ? "COMPLETED"
+                : PlayerQuestData.isActive(player, offer.id())
                 ? "ACTIVE"
                 : PlayerQuestData.hasGuildOfferTaken(
                     player,
