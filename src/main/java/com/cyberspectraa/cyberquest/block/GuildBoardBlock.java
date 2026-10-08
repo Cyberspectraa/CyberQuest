@@ -2,6 +2,7 @@ package com.cyberspectraa.cyberquest.block;
 
 import com.cyberspectraa.cyberquest.guild.GuildContractGenerator;
 import com.cyberspectraa.cyberquest.guild.GuildContractManager;
+import com.cyberspectraa.cyberquest.guild.GuildBoardSavedData;
 import com.cyberspectraa.cyberquest.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -105,7 +106,7 @@ public final class GuildBoardBlock extends Block {
             BlockState partState = defaultBlockState()
                 .setValue(FACING, facing)
                 .setValue(PART, part)
-                .setValue(HAS_PAPER, part.slot() < offerCount);
+                .setValue(HAS_PAPER, part.slot() < offerCount && !GuildBoardSavedData.get((ServerLevel) level).isRemoved(pos, part.slot()));
 
             level.setBlock(partPos, partState, 3);
         }
@@ -341,6 +342,7 @@ public final class GuildBoardBlock extends Block {
 
         int offerCount =
             GuildContractGenerator.offers(level, master).size();
+        GuildBoardSavedData taken = GuildBoardSavedData.get(level);
 
         for (GuildBoardPart part : GuildBoardPart.values()) {
             BlockPos partPos = positionFor(master, facing, part);
@@ -353,7 +355,7 @@ public final class GuildBoardBlock extends Block {
             }
 
             boolean shouldHavePaper =
-                part.slot() < offerCount;
+                part.slot() < offerCount && !taken.isRemoved(master, part.slot());
 
             if (current.getValue(HAS_PAPER) != shouldHavePaper) {
                 level.setBlock(
