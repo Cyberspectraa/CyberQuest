@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "cyberquest:block/notice_sealed"
+    "layer0": "cyberquest:item/guild_contract"
   }
 }
