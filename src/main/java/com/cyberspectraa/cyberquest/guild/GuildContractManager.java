@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 public final class GuildContractManager {
-    public static final int MAX_ACTIVE_CONTRACTS = 3;
+    public static final int MAX_ACTIVE_CONTRACTS = 2;
 
     private GuildContractManager() {
     }
@@ -49,6 +49,12 @@ public final class GuildContractManager {
                 || slot < 0 || slot >= GuildContractGenerator.OFFER_COUNT
                 || !validBoard(level, pos)
                 || player.distanceToSqr(pos.getX() + 1.5, pos.getY() + 1.0, pos.getZ() + 0.5) > 64.0D) {
+            return false;
+        }
+        if (totalHeldAndActive(player) >= MAX_ACTIVE_CONTRACTS) {
+            player.displayClientMessage(
+                Component.literal("You can only hold two guild contracts at a time, including unregistered notices.")
+                    .withStyle(ChatFormatting.YELLOW), true);
             return false;
         }
         GuildBoardSavedData boardData = GuildBoardSavedData.get(level);
@@ -105,8 +111,94 @@ public final class GuildContractManager {
         return true;
     }
 
+    /** Count paper contracts too so players cannot take six then register two. */
+    public static int pendingContracts(ServerPlayer player) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (GuildContractItem.data(player.getInventory().getItem(i)) != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int totalHeldAndActive(ServerPlayer player) {
+        return pendingContracts(player)
+            + QuestManager.activeCategoryCount(player, "guild");
+    }
+
+    /**
+     * Put an unregistered paper back on its original board on the same day.
+     * Server-side verification prevents invented, duplicated or stale notices
+     * from resurrecting new daily contracts.
+     */
+    public static boolean repin(ServerPlayer player, BlockPos clickedPos, ItemStack stack) {
+        if (!(player.level() instanceof ServerLevel level)) return false;
+        CompoundTag data = GuildContractItem.data(stack);
+        if (data == null) return false;
+        BlockState clicked = level.getBlockState(clickedPos);
+        if (!clicked.is(ModBlocks.GUILD_BOARD.get())) return false;
+        BlockPos board = GuildBoardBlock.masterPosition(
+            clickedPos, clicked.getValue(GuildBoardBlock.FACING),
+            clicked.getValue(GuildBoardBlock.PART));
+        if (!validBoard(level, board)) return false;
+        if (player.distanceToSqr(
+                clickedPos.getX() + 0.5, clickedPos.getY() + 0.5,
+                clickedPos.getZ() + 0.5) > 64.0D) return false;
+        ResourceLocation dimension = ResourceLocation.tryParse(data.getString("Dimension"));
+        long day = level.getDayTime() / 24000L;
+        if (dimension == null || !dimension.equals(level.dimension().location())
+                || !data.contains("Day", Tag.TAG_LONG)
+                || !data.contains("BoardPos", Tag.TAG_LONG)
+                || data.getLong("Day") != day
+                || data.getLong("BoardPos") != board.asLong()) {
+            player.displayClientMessage(Component.literal(
+                "This notice belongs to another board or an earlier day.")
+                .withStyle(ChatFormatting.YELLOW), true);
+            return false;
+        }
+        ProceduralQuestOffer requested =
+            ProceduralQuestOffer.fromTag(data.getCompound("Offer"));
+        if (requested == null) return false;
+        int slot = -1;
+        List<ProceduralQuestOffer> offers = GuildContractGenerator.offers(level, board);
+        for (int i = 0; i < offers.size(); i++) {
+            if (offers.get(i).id().equals(requested.id())
+                    && offers.get(i).toTag().equals(requested.toTag())) {
+                slot = i;
+                break;
+            }
+        }
+        if (slot < 0) return false;
+        if (!GuildBoardSavedData.get(level).repin(board, slot)) {
+            player.displayClientMessage(Component.literal(
+                "That notice is already pinned to the board."), true);
+            return false;
+        }
+        stack.shrink(1);
+        ((GuildBoardBlock) ModBlocks.GUILD_BOARD.get())
+            .refreshPapers(level, board, clicked.getValue(GuildBoardBlock.FACING));
+        player.playNotifySound(SoundEvents.BOOK_PAGE_TURN,
+            SoundSource.PLAYERS, 0.7F, 1.1F);
+        player.displayClientMessage(
+            Component.literal("Notice pinned back onto the Guild Board.")
+                .withStyle(ChatFormatting.GOLD), true);
+        return true;
+    }
+
+    private static boolean hasGuildCard(ServerPlayer player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).is(ModItems.GUILD_CARD.get())) return true;
+        }
+        return false;
+    }
+
     public static void receptionistInteraction(ServerPlayer player) {
         ItemStack held = player.getMainHandItem();
+        if (held.is(ModItems.GUILD_CARD.get())) {
+            QuestNetwork.openGuildCard(player);
+            return;
+        }
         if (held.is(ModItems.GUILD_CONTRACT.get())) {
             registerContract(player, held);
             return;
@@ -119,12 +211,18 @@ public final class GuildContractManager {
                     .withStyle(ChatFormatting.GOLD),
                 true
             );
+        } else if (held.isEmpty() && !hasGuildCard(player)) {
+            ItemStack card = new ItemStack(ModItems.GUILD_CARD.get());
+            if (!player.getInventory().add(card)) player.drop(card, false);
+            player.playNotifySound(SoundEvents.VILLAGER_YES,
+                SoundSource.PLAYERS, 0.7F, 1.1F);
+            player.displayClientMessage(
+                Component.literal("Welcome to the guild! Here is your Guild Card. Right-click to view your standing.")
+                    .withStyle(ChatFormatting.GOLD), false);
         } else {
             player.displayClientMessage(
-                Component.literal("Hold an unregistered Guild Contract to sign up. Return here to collect completed contract rewards.")
-                    .withStyle(ChatFormatting.YELLOW),
-                false
-            );
+                Component.literal("Hold a notice to register it, or come back to collect contract rewards.")
+                    .withStyle(ChatFormatting.YELLOW), false);
         }
     }
 
@@ -175,7 +273,7 @@ public final class GuildContractManager {
 
         if (QuestManager.activeCategoryCount(player, "guild") >= MAX_ACTIVE_CONTRACTS) {
             player.displayClientMessage(
-                Component.literal("You already have three registered guild contracts.")
+                Component.literal("You can only register two guild contracts at once.")
                     .withStyle(ChatFormatting.YELLOW),
                 true
             );
