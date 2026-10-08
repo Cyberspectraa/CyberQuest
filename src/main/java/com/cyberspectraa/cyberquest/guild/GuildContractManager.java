@@ -193,6 +193,29 @@ public final class GuildContractManager {
         return false;
     }
 
+    /** APIs invoked only by CyberNpc's server-validated dialogue choices. */
+    public static boolean registerHeldContract(ServerPlayer player) {
+        ItemStack held = player.getMainHandItem();
+        return held.is(ModItems.GUILD_CONTRACT.get())
+            && registerContract(player, held);
+    }
+
+    public static boolean claimReadyContracts(ServerPlayer player) {
+        return QuestManager.turnInReadyCategory(player, "guild") > 0;
+    }
+
+    public static boolean issueOrShowGuildCard(ServerPlayer player) {
+        if (!hasGuildCard(player)) {
+            ItemStack card = new ItemStack(ModItems.GUILD_CARD.get());
+            if (!player.getInventory().add(card)) player.drop(card, false);
+            player.displayClientMessage(
+                Component.literal("Your Guild Card has been issued.")
+                    .withStyle(ChatFormatting.GOLD), false);
+        }
+        QuestNetwork.openGuildCard(player);
+        return true;
+    }
+
     public static void receptionistInteraction(ServerPlayer player) {
         ItemStack held = player.getMainHandItem();
         if (held.is(ModItems.GUILD_CARD.get())) {
