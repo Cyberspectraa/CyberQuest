@@ -66,6 +66,9 @@ dependencies {
 }
 
 tasks.named('processResources', ProcessResources).configure {
+    // ForgeGradle may register src/generated/resources twice. Both entries
+    // refer to the same deterministic generated PNG bytes.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     def replaceProperties = [
             minecraft_version: minecraft_version,
             minecraft_version_range: minecraft_version_range,
