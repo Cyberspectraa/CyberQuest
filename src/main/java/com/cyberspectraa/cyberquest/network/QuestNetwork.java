@@ -2,6 +2,9 @@ package com.cyberspectraa.cyberquest.network;
 
 import com.cyberspectraa.cyberquest.CyberQuest;
 import com.cyberspectraa.cyberquest.guild.GuildContractGenerator;
+import com.cyberspectraa.cyberquest.guild.GuildRank;
+import com.cyberspectraa.cyberquest.compat.CyberProgressionCompat;
+import com.cyberspectraa.cyberquest.network.packet.GuildCardPacket;
 import com.cyberspectraa.cyberquest.guild.GuildBoardSavedData;
 import com.cyberspectraa.cyberquest.guild.ProceduralQuestOffer;
 import com.cyberspectraa.cyberquest.network.packet.AcceptGuildContractPacket;
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class QuestNetwork {
-    private static final String PROTOCOL = "3";
+    private static final String PROTOCOL = "4";
 
     public static final SimpleChannel CHANNEL =
         NetworkRegistry.newSimpleChannel(
@@ -74,6 +77,16 @@ public final class QuestNetwork {
             .add();
 
         CHANNEL.messageBuilder(
+                GuildCardPacket.class,
+                messageId++,
+                NetworkDirection.PLAY_TO_CLIENT
+            )
+            .encoder(GuildCardPacket::encode)
+            .decoder(GuildCardPacket::decode)
+            .consumerMainThread(GuildCardPacket::handle)
+            .add();
+
+        CHANNEL.messageBuilder(
                 JournalSyncPacket.class,
                 messageId++,
                 NetworkDirection.PLAY_TO_CLIENT
@@ -96,6 +109,20 @@ public final class QuestNetwork {
 
     public static void sendToServer(Object packet) {
         CHANNEL.sendToServer(packet);
+    }
+
+    public static void openGuildCard(ServerPlayer player) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+            new GuildCardPacket(
+                player.getGameProfile().getName(),
+                CyberProgressionCompat.getLevel(player),
+                GuildRank.forPlayer(player),
+                PlayerQuestData.questsCompleted(player),
+                PlayerQuestData.guildContractsCompleted(player),
+                PlayerQuestData.guildReputation(player),
+                com.cyberspectraa.cyberquest.quest.QuestManager
+                    .activeCategoryCount(player, "guild")
+            ));
     }
 
     public static void syncJournal(
