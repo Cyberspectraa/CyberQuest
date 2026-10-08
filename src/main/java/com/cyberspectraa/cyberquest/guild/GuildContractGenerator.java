@@ -131,8 +131,14 @@ public final class GuildContractGenerator {
         ServerLevel level,
         BlockPos boardPos
     ) {
-        long day =
-            level.getDayTime() / 24000L;
+        return offersForDay(level, boardPos, level.getDayTime() / 24000L);
+    }
+
+    public static List<ProceduralQuestOffer> offersForDay(
+        ServerLevel level,
+        BlockPos boardPos,
+        long day
+    ) {
         long seed =
             level.getSeed()
                 ^ boardPos.asLong()
