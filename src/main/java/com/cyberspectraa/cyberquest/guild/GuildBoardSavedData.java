@@ -61,6 +61,17 @@ public final class GuildBoardSavedData extends SavedData {
         return (removed.getOrDefault(board.asLong(), 0) & (1 << slot)) != 0;
     }
 
+    public boolean repin(BlockPos board, int slot) {
+        int mask = removed.getOrDefault(board.asLong(), 0);
+        int bit = 1 << slot;
+        if ((mask & bit) == 0) return false;
+        int remaining = mask & ~bit;
+        if (remaining == 0) removed.remove(board.asLong());
+        else removed.put(board.asLong(), remaining);
+        setDirty();
+        return true;
+    }
+
     public boolean take(BlockPos board, int slot) {
         int oldMask = removed.getOrDefault(board.asLong(), 0);
         int bit = 1 << slot;
