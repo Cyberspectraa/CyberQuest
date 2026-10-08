@@ -328,7 +328,7 @@ public final class GuildBoardBlock extends Block {
         builder.add(FACING, PART, HAS_PAPER);
     }
 
-    private void refreshPapers(
+    public void refreshPapers(
         ServerLevel level,
         BlockPos master,
         Direction facing
