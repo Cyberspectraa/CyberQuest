@@ -3,5 +3,6 @@
   "key.categories.cyberquest": "CyberQuest",
   "block.cyberquest.guild_board": "Guild Board",
   "item.cyberquest.guild_board": "Guild Board",
-  "itemGroup.cyberquest": "CyberQuest"
+  "itemGroup.cyberquest": "CyberQuest",
+  "item.cyberquest.guild_contract": "Unregistered Guild Contract"
 }
