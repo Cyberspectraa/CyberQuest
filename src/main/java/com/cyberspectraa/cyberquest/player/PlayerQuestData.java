@@ -12,7 +12,7 @@ import java.util.Set;
 
 public final class PlayerQuestData {
     public static final String ROOT_KEY = "CyberQuest";
-    public static final int DATA_VERSION = 3;
+    public static final int DATA_VERSION = 4;
 
     private static final String VERSION_KEY = "Version";
     private static final String ACTIVE_KEY = "Active";
@@ -25,6 +25,8 @@ public final class PlayerQuestData {
     private static final String FAILURE_GUILD_REP_KEY = "FailureGuildReputation";
     private static final String GENERATED_KEY = "Generated";
     private static final String GUILD_REPUTATION_KEY = "GuildReputation";
+    private static final String QUESTS_COMPLETED_KEY = "QuestsCompletedTotal";
+    private static final String GUILD_COMPLETED_KEY = "GuildContractsCompleted";
     private static final String GUILD_TAKEN_DAY_KEY = "GuildTakenDay";
     private static final String GUILD_TAKEN_KEY = "GuildTaken";
 
@@ -464,6 +466,25 @@ public final class PlayerQuestData {
         ).copy();
     }
 
+    public static int questsCompleted(ServerPlayer player) {
+        return Math.max(0, root(player).getInt(QUESTS_COMPLETED_KEY));
+    }
+
+    public static int guildContractsCompleted(ServerPlayer player) {
+        return Math.max(0, root(player).getInt(GUILD_COMPLETED_KEY));
+    }
+
+    public static void recordQuestCompleted(ServerPlayer player, boolean guild) {
+        CompoundTag root = root(player);
+        int quests = Math.max(0, root.getInt(QUESTS_COMPLETED_KEY));
+        root.putInt(QUESTS_COMPLETED_KEY, quests == Integer.MAX_VALUE ? quests : quests + 1);
+        if (guild) {
+            int completed = Math.max(0, root.getInt(GUILD_COMPLETED_KEY));
+            root.putInt(GUILD_COMPLETED_KEY, completed == Integer.MAX_VALUE ? completed : completed + 1);
+        }
+        write(player, root);
+    }
+
     public static int guildReputation(
         ServerPlayer player
     ) {
@@ -706,6 +727,17 @@ public final class PlayerQuestData {
             );
         }
 
+        if (oldVersion < 4) {
+            // Previous versions stored authored quest history only.
+            // Previously completed daily contracts cannot be recovered.
+            if (!root.contains(QUESTS_COMPLETED_KEY)) {
+                root.putInt(QUESTS_COMPLETED_KEY,
+                    root.getList(COMPLETED_KEY, Tag.TAG_STRING).size());
+            }
+            if (!root.contains(GUILD_COMPLETED_KEY)) {
+                root.putInt(GUILD_COMPLETED_KEY, 0);
+            }
+        }
         root.putInt(VERSION_KEY, DATA_VERSION);
     }
 
