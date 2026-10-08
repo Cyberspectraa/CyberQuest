@@ -4,5 +4,6 @@
   "block.cyberquest.guild_board": "Guild Board",
   "item.cyberquest.guild_board": "Guild Board",
   "itemGroup.cyberquest": "CyberQuest",
-  "item.cyberquest.guild_contract": "Unregistered Guild Contract"
+  "item.cyberquest.guild_contract": "Unregistered Guild Contract",
+  "item.cyberquest.guild_card": "Guild Card"
 }
