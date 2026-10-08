@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0-alpha.7
+
+### NPC dialogue bridge
+- Guild Receptionist actions now run through explicit conversation choices in CyberNpc v0.44.19: register held contract, claim completed guild rewards, and view/issue Guild Card.
+- Ordinary quest NPCs activate their quest interaction via the "Do you have any work for me?" dialogue response.
+- Removed automatic quest acceptance/registration from raw NPC right-clicks, allowing the shared dialogue screen to open consistently.
+- CyberQuest remains optional for CyberNpc; when both are installed their dialogue features integrate through a server-side compatibility bridge.
+- Quest saves, inventory contract data, journal visuals and existing guild progression remain unchanged.
+
 ## 0.3.0-alpha.6
 
 ### Minecraft 1.20.1 vanilla-derived visual overhaul
