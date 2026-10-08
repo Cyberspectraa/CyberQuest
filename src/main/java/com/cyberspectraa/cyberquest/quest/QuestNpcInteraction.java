@@ -2,6 +2,7 @@ package com.cyberspectraa.cyberquest.quest;
 
 import com.cyberspectraa.cyberquest.compat.CyberNpcQuestCompat;
 import com.cyberspectraa.cyberquest.compat.CyberServerWorldStateCompat;
+import com.cyberspectraa.cyberquest.guild.GuildContractManager;
 import com.cyberspectraa.cyberquest.player.PlayerQuestData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,12 +22,17 @@ public final class QuestNpcInteraction {
     private QuestNpcInteraction() {
     }
 
-    public static void handle(
+    public static boolean handle(
         ServerPlayer player,
         Entity npc
     ) {
         if (!CyberNpcQuestCompat.isCyberNpc(npc)) {
-            return;
+            return false;
+        }
+
+        if (CyberNpcQuestCompat.isGuildReceptionist(npc)) {
+            GuildContractManager.receptionistInteraction(player);
+            return true;
         }
 
         String npcId =
@@ -97,7 +103,7 @@ public final class QuestNpcInteraction {
 
                 // An active bound quest is enough for this interaction.
                 // Do not block the NPC's own dialogue or other behaviour.
-                return;
+                return false;
             }
 
             if (QuestManager.canStart(
@@ -111,8 +117,9 @@ public final class QuestNpcInteraction {
                 );
 
                 // Start at most one bound quest per interaction.
-                return;
+                return false;
             }
         }
+        return false;
     }
 }
