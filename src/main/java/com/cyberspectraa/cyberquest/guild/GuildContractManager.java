@@ -101,7 +101,7 @@ public final class GuildContractManager {
                 .withStyle(ChatFormatting.GOLD),
             true
         );
-        player.closeContainer();
+        QuestNetwork.openGuildBoard(player, pos, slot);
         return true;
     }
 
