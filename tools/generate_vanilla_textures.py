@@ -218,20 +218,9 @@ d.rectangle((8,6,201,45),outline=(143,110,68,255))
 d.line((14,19,193,19),fill=(180,147,97,255))
 save(hud,"gui","quest_hud")
 
-# Item icons are assembled from actual vanilla 16px item texture silhouettes.
-guild_card=V["map"].copy()
-d=ImageDraw.Draw(guild_card)
-d.rectangle((4,3,12,12),fill=(219,204,153,255),outline=(128,91,54,255))
-for y,x2 in [(5,10),(7,10),(9,8)]:
-    d.line((6,y,x2,y),fill=(91,60,42,255))
-wax(guild_card,11,11,1)
-save(guild_card,"item","guild_card")
-contract=V["paper"].copy()
-d=ImageDraw.Draw(contract)
-for y,x2 in [(6,10),(8,11),(10,10)]:
-    d.line((6,y,x2,y),fill=(101,64,43,255))
-wax(contract,11,11,1)
-save(contract,"item","guild_contract")
+# Approved Guild Contract scroll and Guild Card sprites are checked in under
+# src/main/resources/assets/cyberquest/textures/item/ instead of generated here.
+# Do not overwrite the user's approved hand-picked inventory icons.
 board=Image.new("RGBA",(32,32))
 board.alpha_composite(wood("dark_oak_planks",30,28,-9,1),(1,2))
 board.alpha_composite(wood("spruce_planks",24,23,-5,2),(4,4))
@@ -243,4 +232,4 @@ for x,y in [(6,5),(17,7),(6,16),(18,18)]:
     d.line((x+2,y+3,x+6,y+3),fill=(88,65,44,255))
 save(board,"item","guild_board")
 
-print("Generated 16 vanilla-derived CyberQuest PNG textures:", DEST)
+print("Generated 14 vanilla-derived CyberQuest PNG textures:", DEST)
