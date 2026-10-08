@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0-alpha.5
+
+### Repin contracts, two-contract limit, and Guild Card
+- Right-click your original Guild Board while holding an unregistered contract to pin the paper back. The board restores the correct note visually for all players.
+- Returned notices can be taken by another player; paper is only consumed when successfully pinned back, and the board verifies the original world, position, day and procedural offer.
+- Notices can be returned only on the Minecraft day they were issued; older notices can still be registered with the receptionist.
+- Limit two guild contracts per player, counting both carried unregistered notices and active registered contracts, enforced server-side; no taking more notices while at the limit.
+- Added the reusable Guild Card item. Right-click it to read a server-authoritative member page showing player name, CyberRaces level, guild rank, total quests completed, guild contracts completed, reputation and active slots.
+- Guild rank rises F/E/D/C/B/A/S based on cumulative guild completions and reputation. F begins at zero; higher ranks require more completed contracts and reputation.
+- Guild Card uses only vanilla item/map and Minecraft book GUI textures, with vanilla fonts; no generated or custom textures.
+- Guild Receptionists hand out a Guild Card when spoken to with an empty hand if the player does not carry one. Card may alternatively be crafted from paper and a gold nugget.
+- Completed quest totals now persist across deaths/logins: both authored and guild completions increase total, guild completions separately count towards guild rank.
+- Existing completed authored story/class quests are backfilled during save migration; older random guild contracts were not previously recorded permanently and cannot be reconstructed.
+- Bumped the network protocol for Guild Card screen packets.
+
 ## 0.3.0-alpha.3
 
 ### Landscape Guild Board correction
