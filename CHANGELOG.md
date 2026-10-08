@@ -10,7 +10,7 @@
 - Added the reusable Guild Card item. Right-click it to read a server-authoritative member page showing player name, CyberRaces level, guild rank, total quests completed, guild contracts completed, reputation and active slots.
 - Guild rank rises F/E/D/C/B/A/S based on cumulative guild completions and reputation. F begins at zero; higher ranks require more completed contracts and reputation.
 - Guild Card uses only vanilla item/map and Minecraft book GUI textures, with vanilla fonts; no generated or custom textures.
-- Guild Receptionists hand out a Guild Card when spoken to with an empty hand if the player does not carry one. Card may alternatively be crafted from paper and a gold nugget.
+- Guild Receptionists issue a Guild Card automatically upon first successful contract registration. Players who lost theirs can request a replacement with an empty hand. Cards are deliberately not craftable as membership credentials.
 - Completed quest totals now persist across deaths/logins: both authored and guild completions increase total, guild completions separately count towards guild rank.
 - Existing completed authored story/class quests are backfilled during save migration; older random guild contracts were not previously recorded permanently and cannot be reconstructed.
 - Bumped the network protocol for Guild Card screen packets.
