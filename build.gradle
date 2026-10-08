@@ -47,6 +47,19 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// Pixel textures are authored from embedded Minecraft 1.20.1 sprites. They
+// are generated before resource packaging for deterministic client assets.
+// Python/Pillow are build-time only; Minecraft does not need them installed.
+tasks.register('generateVanillaQuestTextures', Exec) {
+    workingDir project.projectDir
+    def python = System.getenv('PYTHON') ?:
+            (System.getProperty('os.name').toLowerCase().contains('windows') ? 'py' : 'python3')
+    commandLine python, 'tools/generate_vanilla_textures.py'
+}
+tasks.named('processResources').configure {
+    dependsOn tasks.named('generateVanillaQuestTextures')
+}
+
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
