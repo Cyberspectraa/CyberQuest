@@ -44,14 +44,7 @@ public final class QuestHudOverlay {
                 - width - 8;
         int y = 8;
 
-        GuiTheme.entry(
-            graphics,
-            x,
-            y,
-            width,
-            height,
-            true
-        );
+        GuiTheme.hud(graphics, x, y, width, height);
 
         graphics.drawString(
             minecraft.font,
