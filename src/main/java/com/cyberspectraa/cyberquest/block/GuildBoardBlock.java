@@ -2,6 +2,7 @@ package com.cyberspectraa.cyberquest.block;
 
 import com.cyberspectraa.cyberquest.guild.GuildContractGenerator;
 import com.cyberspectraa.cyberquest.guild.GuildContractManager;
+import com.cyberspectraa.cyberquest.item.GuildContractItem;
 import com.cyberspectraa.cyberquest.guild.GuildBoardSavedData;
 import com.cyberspectraa.cyberquest.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -153,6 +154,15 @@ public final class GuildBoardBlock extends Block {
         Direction facing = state.getValue(FACING);
         GuildBoardPart part = state.getValue(PART);
         BlockPos master = masterPosition(pos, facing, part);
+
+        // Holding an unregistered paper gives a return-to-board action.
+        // Never open another quest while the player is trying to repin.
+        if (hand == InteractionHand.MAIN_HAND
+                && GuildContractItem.data(player.getItemInHand(hand)) != null) {
+            GuildContractManager.repin(
+                serverPlayer, pos, player.getItemInHand(hand));
+            return InteractionResult.CONSUME;
+        }
 
         refreshPapers(serverLevel, master, facing);
 
