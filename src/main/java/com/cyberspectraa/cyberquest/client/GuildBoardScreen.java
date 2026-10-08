@@ -226,7 +226,7 @@ public final class GuildBoardScreen extends Screen {
             case "COMPLETED" ->
                 "Already taken today";
             default ->
-                "Take Contract";
+                "Take Notice";
         };
 
         int buttonWidth = 118;
