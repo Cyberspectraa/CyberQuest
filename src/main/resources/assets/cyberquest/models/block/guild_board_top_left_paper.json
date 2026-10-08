@@ -1,10 +1,10 @@
 {
   "render_type": "minecraft:cutout",
   "textures": {
-    "back": "minecraft:block/spruce_planks",
-    "frame": "minecraft:block/dark_oak_planks",
+    "back": "cyberquest:block/guild_board_back",
+    "frame": "cyberquest:block/guild_board_frame",
     "paper": "cyberquest:block/notice_sealed",
-    "particle": "minecraft:block/spruce_planks"
+    "particle": "cyberquest:block/guild_board_back"
   },
   "elements": [
     {
