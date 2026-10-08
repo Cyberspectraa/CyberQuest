@@ -55,6 +55,18 @@ public final class CyberNpcQuestCompat {
         }
     }
 
+    public static boolean isGuildReceptionist(Entity entity) {
+        if (!isCyberNpc(entity)) return false;
+        try {
+            Object role = entity.getClass().getMethod("getRole").invoke(entity);
+            return role != null
+                && ("guild receptionist".equalsIgnoreCase(role.toString())
+                 || "guild_receptionist".equalsIgnoreCase(role.toString()));
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            return false;
+        }
+    }
+
     public static String npcId(Entity entity) {
         if (entity == null) {
             return "";
