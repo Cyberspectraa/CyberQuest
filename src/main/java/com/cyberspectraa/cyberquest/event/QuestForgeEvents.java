@@ -110,23 +110,6 @@ public final class QuestForgeEvents {
         QuestManager.refreshDynamicObjectives(player);
     }
 
-    @SubscribeEvent
-    public static void onEntityInteract(
-        PlayerInteractEvent.EntityInteract event
-    ) {
-        if (event.getHand() != InteractionHand.MAIN_HAND
-                || !(event.getEntity()
-                    instanceof ServerPlayer player)
-                || player.level().isClientSide) {
-            return;
-        }
-
-        if (QuestNpcInteraction.handle(
-            player,
-            event.getTarget()
-        )) {
-            event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
-            event.setCanceled(true);
-        }
-    }
+    // NPC quest actions now advance through CyberNpc's dialogue choices.
+    // Do not intercept raw right-clicks: the NPC dialogue must open first.
 }
