@@ -106,6 +106,7 @@ public final class QuestForgeEvents {
             return;
         }
 
+        QuestManager.checkExpired(player);
         QuestManager.refreshDynamicObjectives(player);
     }
 
@@ -120,9 +121,12 @@ public final class QuestForgeEvents {
             return;
         }
 
-        QuestNpcInteraction.handle(
+        if (QuestNpcInteraction.handle(
             player,
             event.getTarget()
-        );
+        )) {
+            event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
+            event.setCanceled(true);
+        }
     }
 }
