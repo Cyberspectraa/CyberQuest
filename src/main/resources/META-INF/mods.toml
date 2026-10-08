@@ -27,7 +27,7 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="cybernpc"
 mandatory=false
-versionRange="[0.44.17,)"
+versionRange="[0.44.18,)"
 ordering="AFTER"
 side="BOTH"
 
