@@ -224,7 +224,7 @@ public final class GuildBoardScreen extends Screen {
             case "ACTIVE" ->
                 "Accepted — see your journal";
             case "COMPLETED" ->
-                "Already taken today";
+                "Notice removed from board";
             default ->
                 "Take Notice";
         };
