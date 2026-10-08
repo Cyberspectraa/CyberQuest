@@ -50,6 +50,8 @@ public final class GuildContractItem extends Item {
         if (offer == null) return;
         tooltip.add(Component.literal(offer.objectiveText()).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.literal("Deliver to a Guild Receptionist to accept").withStyle(ChatFormatting.GOLD));
+        tooltip.add(Component.literal("Right-click its original Guild Board to return it today")
+            .withStyle(ChatFormatting.DARK_GREEN));
         if (offer.durationDays() > 0) {
             tooltip.add(Component.literal("Deadline: " + offer.durationDays() + " Minecraft day(s) after registration")
                 .withStyle(ChatFormatting.DARK_RED));
