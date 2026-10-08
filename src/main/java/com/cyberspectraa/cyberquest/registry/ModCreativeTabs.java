@@ -28,13 +28,10 @@ public final class ModCreativeTabs {
                         .get()
                         .getDefaultInstance()
                 )
-                .displayItems(
-                    (parameters, output) ->
-                        output.accept(
-                            ModItems.GUILD_BOARD.get()
-                        );
-                        output.accept(ModItems.GUILD_CARD.get());
-                )
+                .displayItems((parameters, output) -> {
+                    output.accept(ModItems.GUILD_BOARD.get());
+                    output.accept(ModItems.GUILD_CARD.get());
+                })
                 .build()
         );
 
