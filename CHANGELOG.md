@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0-alpha.6
+
+### Minecraft 1.20.1 vanilla-derived visual overhaul
+- Reworked the journal's open-book paper, leather spine, wooden binding, tabs and parchment quest-entry strips into textured, Minecraft-style pixel art.
+- Replaced the Guild Board's paper posters (plain, bounty and sealed) with hand-pixel-edited vanilla-paper/map-derived parchment, ink, pinned corners and wax seals.
+- Retextured the board's backing and frame using edited Minecraft spruce and dark oak planks, preserving the 3x2 wall-mounted shape and quest interactions.
+- Redrew the physical Guild Card, contract and Guild Board item icons by editing Minecraft 1.20.1 map, paper and wood sprite pixels.
+- Replaced the Guild Card page with a textured membership sheet that still shows the player's live server-authoritative details.
+- Reworked the guild contract preview parchment and quest-tracking HUD to share the parchment/wood visual language.
+- Deleted two damaged journal-entry PNG assets and replaced them with verified PNG images generated via Pillow.
+- Added a deterministic, build-time pixel texture script embedding exact 1.20.1 source sprite bytes from InventivetalentDev/minecraft-assets. It runs before resource packing, and adds no Python dependency to the game.
+- All quest gameplay, registry IDs, networking and saved data remain unchanged.
+
 ## 0.3.0-alpha.5
 
 ### Repin contracts, two-contract limit, and Guild Card
