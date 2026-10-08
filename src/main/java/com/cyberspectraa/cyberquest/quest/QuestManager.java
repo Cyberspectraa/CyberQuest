@@ -279,6 +279,10 @@ public final class QuestManager {
             );
         }
 
+        PlayerQuestData.recordQuestCompleted(
+            player,
+            "guild".equalsIgnoreCase(quest.category())
+        );
         grantRewards(
             player,
             quest
