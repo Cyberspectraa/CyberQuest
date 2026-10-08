@@ -32,7 +32,8 @@ public final class ModCreativeTabs {
                     (parameters, output) ->
                         output.accept(
                             ModItems.GUILD_BOARD.get()
-                        )
+                        );
+                        output.accept(ModItems.GUILD_CARD.get());
                 )
                 .build()
         );
