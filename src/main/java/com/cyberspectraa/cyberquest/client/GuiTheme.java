@@ -15,6 +15,8 @@ public final class GuiTheme {
         texture("journal_entry");
     private static final ResourceLocation ENTRY_SELECTED =
         texture("journal_entry_selected");
+    private static final ResourceLocation QUEST_HUD =
+        texture("quest_hud");
 
     public static final int BOOK_WIDTH = 448;
     public static final int BOOK_HEIGHT = 256;
@@ -98,6 +100,13 @@ public final class GuiTheme {
             96,
             24
         );
+    }
+
+    public static void hud(
+        GuiGraphics graphics, int x, int y, int width, int height
+    ) {
+        graphics.blit(QUEST_HUD, x, y, width, height,
+            0.0F, 0.0F, 210, 52, 210, 52);
     }
 
     public static void entry(
