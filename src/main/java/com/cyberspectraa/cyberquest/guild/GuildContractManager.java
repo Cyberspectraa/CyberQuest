@@ -287,6 +287,16 @@ public final class GuildContractManager {
             return false;
         }
 
+        // A new member receives their first card on registration.
+        // It is not a craftable credential; the receptionist issues it.
+        if (!hasGuildCard(player)) {
+            ItemStack card = new ItemStack(ModItems.GUILD_CARD.get());
+            if (!player.getInventory().add(card)) player.drop(card, false);
+            player.displayClientMessage(
+                Component.literal("The receptionist issued your Guild Card.")
+                    .withStyle(ChatFormatting.GOLD), false);
+        }
+
         // Registration is the moment a deadline starts. Paper is consumed.
         stack.shrink(1);
         player.playNotifySound(SoundEvents.VILLAGER_YES, SoundSource.PLAYERS, 0.8F, 1.1F);
