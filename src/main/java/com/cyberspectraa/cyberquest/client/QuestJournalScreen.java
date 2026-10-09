@@ -673,14 +673,16 @@ public final class QuestJournalScreen extends Screen {
             3
         );
 
-        graphics.drawCenteredString(
+        // Draw headings as flat ink on parchment; Minecraft's centred
+        // string helper adds a dark drop shadow by default.
+        String heading = "Adventurer's Journal";
+        graphics.drawString(
             font,
-            Component.literal(
-                "Adventurer's Journal"
-            ),
-            layout.rightPageCenterX(),
+            Component.literal(heading),
+            layout.rightPageCenterX() - font.width(heading) / 2,
             layout.pageTop() + 50,
-            GuiTheme.INK
+            GuiTheme.INK,
+            false
         );
 
         drawCenteredWrapped(
@@ -782,12 +784,15 @@ public final class QuestJournalScreen extends Screen {
         );
 
         for (int i = 0; i < count; i++) {
-            graphics.drawCenteredString(
+            // Preserve centred alignment, but disable the text shadow.
+            FormattedCharSequence line = lines.get(i);
+            graphics.drawString(
                 font,
-                lines.get(i),
-                x + width / 2,
+                line,
+                x + (width - font.width(line)) / 2,
                 y,
-                color
+                color,
+                false
             );
             y += 10;
         }
