@@ -85,6 +85,8 @@ public final class QuestCommands {
                                 ))
                         )
                 )
+                .then(Commands.literal("admin")
+                    .requires(source -> source.hasPermission(2))
                 .then(
                     Commands.literal("start")
                         .requires(source ->
@@ -205,6 +207,7 @@ public final class QuestCommands {
                                     )
                                 ))
                         )
+                )
                 )
                 .then(npcCommands())
         );
