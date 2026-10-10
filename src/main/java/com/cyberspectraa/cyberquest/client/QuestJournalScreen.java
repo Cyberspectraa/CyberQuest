@@ -268,7 +268,8 @@ public final class QuestJournalScreen extends Screen {
                 ? 0xFFE8CA75
                 : 0xFFE6D2A4;
 
-            graphics.drawCenteredString(
+            GuiTheme.drawCenteredNoShadow(
+                graphics,
                 font,
                 Component.literal(
                     tabs[i].label
@@ -601,7 +602,8 @@ public final class QuestJournalScreen extends Screen {
             entry.tracked()
         );
 
-        graphics.drawCenteredString(
+        GuiTheme.drawCenteredNoShadow(
+                graphics,
             font,
             Component.literal(
                 entry.tracked()
