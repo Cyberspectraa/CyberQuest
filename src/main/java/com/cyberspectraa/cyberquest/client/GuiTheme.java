@@ -2,6 +2,9 @@ package com.cyberspectraa.cyberquest.client;
 
 import com.cyberspectraa.cyberquest.CyberQuest;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.resources.ResourceLocation;
 
 public final class GuiTheme {
@@ -28,6 +31,28 @@ public final class GuiTheme {
     public static final int LIGHT_TEXT = 0xF2DFA8;
 
     private GuiTheme() {
+    }
+
+    /**
+     * Minecraft's drawCenteredString always renders with a shadow.
+     * For text on parchment, center manually and draw flat ink instead.
+     */
+    public static void drawCenteredNoShadow(
+        GuiGraphics graphics, Font font, Component text,
+        int centerX, int y, int color
+    ) {
+        graphics.drawString(
+            font, text, centerX - font.width(text) / 2, y, color, false
+        );
+    }
+
+    public static void drawCenteredNoShadow(
+        GuiGraphics graphics, Font font, FormattedCharSequence text,
+        int centerX, int y, int color
+    ) {
+        graphics.drawString(
+            font, text, centerX - font.width(text) / 2, y, color, false
+        );
     }
 
     private static ResourceLocation texture(
