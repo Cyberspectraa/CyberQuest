@@ -107,7 +107,8 @@ public final class GuildBoardScreen extends Screen {
         );
 
         if (offer == null) {
-            graphics.drawCenteredString(
+            GuiTheme.drawCenteredNoShadow(
+                graphics,
                 font,
                 Component.literal(
                     "No notice is pinned here."
@@ -130,7 +131,8 @@ public final class GuildBoardScreen extends Screen {
         int textRight = left + noticeWidth - 30;
         int textWidth = textRight - textLeft;
 
-        graphics.drawCenteredString(
+        GuiTheme.drawCenteredNoShadow(
+                graphics,
             font,
             Component.literal(offer.title()),
             width / 2,
@@ -138,7 +140,8 @@ public final class GuildBoardScreen extends Screen {
             GuiTheme.INK
         );
 
-        graphics.drawCenteredString(
+        GuiTheme.drawCenteredNoShadow(
+                graphics,
             font,
             Component.literal(
                 "Guild reputation: "
@@ -165,7 +168,8 @@ public final class GuildBoardScreen extends Screen {
                     taskLines.size()
                 );
                 i++) {
-            graphics.drawCenteredString(
+            GuiTheme.drawCenteredNoShadow(
+                graphics,
                 font,
                 taskLines.get(i),
                 width / 2,
@@ -254,7 +258,8 @@ public final class GuildBoardScreen extends Screen {
                 )
         );
 
-        graphics.drawCenteredString(
+        GuiTheme.drawCenteredNoShadow(
+                graphics,
             font,
             Component.literal(stateText),
             width / 2,
