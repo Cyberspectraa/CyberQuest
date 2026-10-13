@@ -46,7 +46,7 @@ public final class RaceJournalData {
             "Horned, tailed people touched by infernal magic.",
             "Strong magic and increased resistance to fire.",
             "V: Infernal Surge: melee attacks strike harder and ignite foes for 8 seconds.",
-            "Other active racial effects are still being designed."),
+            "Less suited to physical defence without Infernal Surge."),
         new Entry("Dragonborn", "Starting race",
             "Scaleblooded fighters with matching body, horns and tail.",
             "Strong armour, health and tough scales.",
