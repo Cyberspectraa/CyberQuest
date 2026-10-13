@@ -8,7 +8,7 @@ import java.util.List;
  * Lightweight written field guide for the Adventurer's Journal.
  * No compile-time link to CyberRaces: CyberQuest can still run alone.
  * These 15 starting races and the acquired Undead reflect the
- * CyberRaces 0.3.2-alpha.52 base-race beta.
+ * CyberRaces 0.3.2-alpha.53 base-race beta.
  */
 public final class RaceJournalData {
     private RaceJournalData() {}
@@ -40,12 +40,12 @@ public final class RaceJournalData {
         new Entry("Goblin", "Starting race",
             "Small, fast scavengers and opportunists.",
             "Quick movement and a little bonus luck.",
-            "V: Scavenger Sense (under review): scans for nearby drops and stocked containers.",
+            "V: Treasure Instinct: highlights nearby ore and stocked containers for 8 seconds.",
             "More fragile than Humans."),
         new Entry("Tiefling", "Starting race",
             "Horned, tailed people touched by infernal magic.",
             "Strong magic and increased resistance to fire.",
-            "No active racial ability yet.",
+            "V: Infernal Surge: melee attacks strike harder and ignite foes for 8 seconds.",
             "Other active racial effects are still being designed."),
         new Entry("Dragonborn", "Starting race",
             "Scaleblooded fighters with matching body, horns and tail.",
@@ -70,7 +70,7 @@ public final class RaceJournalData {
         new Entry("Dogfolk", "Starting race",
             "Sturdy canine adventurers, keen of nose.",
             "Less sprint exhaustion; a strong survivalist build.",
-            "V: Scent (under review): tracks creatures and nearby objects.",
+            "V: Hunter's Nose: briefly highlights nearby creatures through walls.",
             "Slightly lower natural mana."),
         new Entry("Foxfolk", "Starting race",
             "Quick, clever fox-eared adventurers.",

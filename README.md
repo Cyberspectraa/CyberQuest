@@ -1,8 +1,19 @@
 # CyberQuest
 
-**Current version: 0.3.0-alpha.11** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
+**Current version: 0.3.0-alpha.12** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
 
 CyberQuest is the data-driven quest and Adventurer's Guild framework for CyberSpectra Season 2. It owns **quest definitions, player progress, journal/tracking, NPC quest binding, generated guild contracts, guild reputation and ranks**. It does **not** own the world's story-act/region/boss state—that belongs to the optional [CyberServer](https://github.com/Cyberspectraa/CyberServer) mod.
+
+## Base-race guide ability update (0.3.0-alpha.12)
+
+The Races page in the Adventurer's Journal now describes the finalized
+Goblin **Treasure Instinct**, Dogfolk **Hunter's Nose**, and Tiefling
+**Infernal Surge** actions, including temporary duration and their effects.
+These replace earlier under-review descriptions without changing quest
+logic, journal controls, world saves, or the existing parchment style.
+The updated text describes CyberRaces 0.3.2-alpha.53. Update
+CyberQuest on both client and server; CyberRaces 0.3.2-alpha.53 is
+required to make the three actions available as documented.
 
 ## Races reference tab (0.3.0-alpha.11)
 
@@ -17,7 +28,7 @@ CyberQuest journal textures and makes no new network or save data.
 The tab reads a lightweight local field guide and appears when
 CyberRaces is installed. CyberQuest still works without CyberRaces:
 the tab then displays an installation hint rather than failing to
-load. Race guide copy is aligned to CyberRaces **0.3.2-alpha.52**;
+load. Race guide copy was initially aligned to CyberRaces **0.3.2-alpha.52**;
 existing users should install that CyberRaces version before relying
 on the guide's Slime, Arachnid and crafting descriptions.
 
