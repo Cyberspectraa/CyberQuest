@@ -17,7 +17,9 @@ import java.util.Locale;
 
 public final class QuestJournalScreen extends Screen {
     private JournalTab tab = JournalTab.JOURNAL;
+    private static final int RACES_PER_PAGE = 5;
     private int selected;
+    private int racePage;
 
     public QuestJournalScreen() {
         super(Component.literal("Adventurer's Journal"));
@@ -59,6 +61,9 @@ public final class QuestJournalScreen extends Screen {
             mouseY
         );
 
+        if (tab == JournalTab.RACES) {
+            drawRaceGuide(graphics, layout);
+        } else {
         List<JournalEntry> entries =
             visibleEntries();
 
@@ -92,6 +97,7 @@ public final class QuestJournalScreen extends Screen {
                 mouseX,
                 mouseY
             );
+        }
         }
 
         super.render(
@@ -152,9 +158,14 @@ public final class QuestJournalScreen extends Screen {
             )) {
                 tab = value;
                 selected = 0;
+                racePage = 0;
                 playPageTurn(1.0F);
                 return true;
             }
+        }
+
+        if (tab == JournalTab.RACES) {
+            return clickRaceGuide(layout, mouseX, mouseY);
         }
 
         List<JournalEntry> entries =
@@ -237,6 +248,117 @@ public final class QuestJournalScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    /** Fourth parchment tab: browsable base races and acquired Undead. */
+    private void drawRaceGuide(GuiGraphics graphics, Layout layout) {
+        List<RaceJournalData.Entry> races = RaceJournalData.entries();
+        if (races.isEmpty()) {
+            drawEmptyPage(graphics, layout);
+            return;
+        }
+        int pages = (races.size() + RACES_PER_PAGE - 1) / RACES_PER_PAGE;
+        racePage = Math.max(0, Math.min(racePage, pages - 1));
+        selected = Math.max(0, Math.min(selected, races.size() - 1));
+        int first = racePage * RACES_PER_PAGE;
+
+        graphics.drawString(font, Component.literal("Races"),
+                layout.leftPageX(), layout.pageTop(), GuiTheme.WAX, false);
+        graphics.fill(layout.leftPageX(), layout.pageTop() + 11,
+                layout.leftPageRight(), layout.pageTop() + 12, 0x665D4228);
+
+        int y = layout.pageTop() + 27;
+        for (int i = first; i < Math.min(first + RACES_PER_PAGE, races.size()); i++) {
+            RaceJournalData.Entry race = races.get(i);
+            GuiTheme.entry(graphics, layout.leftPageX(), y,
+                    layout.leftPageWidth(), 25, i == selected);
+            graphics.drawString(font, Component.literal(
+                    trimToWidth(race.name(), layout.leftPageWidth() - 18)),
+                    layout.leftPageX() + 7, y + 3, GuiTheme.INK, false);
+            graphics.drawString(font, Component.literal(race.status()),
+                    layout.leftPageX() + 7, y + 13, GuiTheme.INK_MUTED, false);
+            y += 27;
+        }
+
+        int controlsY = layout.pageBottom() - 16;
+        if (racePage > 0) {
+            graphics.drawString(font, Component.literal("< Prev"),
+                    layout.leftPageX(), controlsY, GuiTheme.WAX, false);
+        }
+        graphics.drawString(font, Component.literal(
+                (racePage + 1) + " / " + pages),
+                layout.leftPageX() + layout.leftPageWidth() / 2 - 12,
+                controlsY, GuiTheme.INK_MUTED, false);
+        if (racePage + 1 < pages) {
+            graphics.drawString(font, Component.literal("Next >"),
+                    layout.leftPageRight() - 38,
+                    controlsY, GuiTheme.WAX, false);
+        }
+
+        RaceJournalData.Entry race = races.get(selected);
+        int x = layout.rightPageX();
+        int right = layout.rightPageRight();
+        int ty = layout.pageTop();
+        int width = layout.rightPageWidth();
+        graphics.drawString(font, Component.literal(race.name()),
+                x, ty, GuiTheme.INK, false);
+        ty += 15;
+        ty = drawWrapped(graphics, race.status(), x, ty, width,
+                GuiTheme.GOLD, 2);
+        ty += 5;
+        ty = drawWrapped(graphics, race.identity(), x, ty, width,
+                GuiTheme.INK_MUTED, 4);
+        ty += 4;
+        ty = sectionTitle(graphics, "Traits", x, ty, right);
+        ty = drawWrapped(graphics, race.traits(), x, ty, width,
+                GuiTheme.INK, 5);
+        ty += 3;
+        ty = sectionTitle(graphics, "Ability", x, ty, right);
+        ty = drawWrapped(graphics, race.active(), x, ty, width,
+                GuiTheme.INK, 4);
+        if (ty < layout.pageBottom() - 36) {
+            ty += 4;
+            ty = sectionTitle(graphics, "Weakness", x, ty, right);
+            drawWrapped(graphics, race.caution(), x, ty, width,
+                    GuiTheme.INK_MUTED, 3);
+        }
+    }
+
+    private boolean clickRaceGuide(Layout layout, double x, double y) {
+        List<RaceJournalData.Entry> races = RaceJournalData.entries();
+        if (races.isEmpty()) return true;
+
+        int pages = (races.size() + RACES_PER_PAGE - 1) / RACES_PER_PAGE;
+        int bottomY = layout.pageBottom() - 20;
+        if (y >= bottomY && y < layout.pageBottom()) {
+            if (x >= layout.leftPageX()
+                    && x <= layout.leftPageX() + 42 && racePage > 0) {
+                racePage--;
+                selected = racePage * RACES_PER_PAGE;
+                playPageTurn(0.95F);
+                return true;
+            }
+            if (x >= layout.leftPageRight() - 44
+                    && x <= layout.leftPageRight() && racePage + 1 < pages) {
+                racePage++;
+                selected = racePage * RACES_PER_PAGE;
+                playPageTurn(1.05F);
+                return true;
+            }
+        }
+
+        int rowY = layout.pageTop() + 27;
+        int first = racePage * RACES_PER_PAGE;
+        for (int i = first; i < Math.min(first + RACES_PER_PAGE, races.size()); i++) {
+            if (x >= layout.leftPageX() && x < layout.leftPageRight()
+                    && y >= rowY && y < rowY + 25) {
+                selected = i;
+                playPageTurn(1.0F);
+                return true;
+            }
+            rowY += 27;
+        }
+        return true;
     }
 
     private void drawTabs(
@@ -644,6 +766,8 @@ public final class QuestJournalScreen extends Screen {
                 "No rumours recorded.";
             case CHRONICLE ->
                 "No tales recorded yet.";
+            case RACES ->
+                "No race information available.";
         };
 
         String sub = switch (tab) {
@@ -653,6 +777,8 @@ public final class QuestJournalScreen extends Screen {
                 "Whispers and leads you discover will appear here.";
             case CHRONICLE ->
                 "Resolved adventures will become part of your story.";
+            case RACES ->
+                "Install CyberRaces to read the field guide.";
         };
 
         drawCenteredWrapped(
@@ -885,9 +1011,9 @@ public final class QuestJournalScreen extends Screen {
         );
         int tabHeight = 22;
         int gap = 5;
-        int total =
-            tabWidth * 3
-                + gap * 2;
+        int count = JournalTab.values().length;
+        int total = tabWidth * count
+                + gap * (count - 1);
 
         int start =
             layout.bookX()
@@ -990,6 +1116,10 @@ public final class QuestJournalScreen extends Screen {
         CHRONICLE(
             "Chronicle",
             "Resolved Tales"
+        ),
+        RACES(
+            "Races",
+            "Race Field Guide"
         );
 
         private final String label;
@@ -1028,6 +1158,7 @@ public final class QuestJournalScreen extends Screen {
                     || "chronicle".equals(
                         entry.section()
                     );
+                case RACES -> false;
             };
         }
     }
