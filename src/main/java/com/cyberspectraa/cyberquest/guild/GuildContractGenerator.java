@@ -240,10 +240,10 @@ public final class GuildContractGenerator {
                     + ".";
 
             String description = hunt
-                ? "A guild notice calls for adventurers to deal with "
+                ? "Bounty: clear out "
                     + target.label()
-                    + " troubling the roads and settlements."
-                : "The guild quartermaster has posted a request for "
+                    + " for the guild."
+                : "The quartermaster needs "
                     + target.label()
                     + ".";
 

@@ -614,7 +614,7 @@ public final class QuestJournalScreen extends Screen {
 
             String resolution =
                 entry.completionText().isBlank()
-                    ? "This tale has been entered into your chronicle."
+                    ? "Quest completed."
                     : entry.completionText();
 
             drawWrapped(
@@ -646,7 +646,7 @@ public final class QuestJournalScreen extends Screen {
         if (knowledge.isEmpty()
                 && entry.objectives().isEmpty()) {
             knowledge.add(
-                "The matter is still unclear."
+                "No details yet."
             );
         }
 
@@ -703,7 +703,7 @@ public final class QuestJournalScreen extends Screen {
         drawWrapped(
             graphics,
             entry.currentLead().isBlank()
-                ? "Continue following the trail."
+                ? "Check your quest objectives."
                 : entry.currentLead(),
             x,
             leadY,
@@ -765,18 +765,18 @@ public final class QuestJournalScreen extends Screen {
             case RUMOURS ->
                 "No rumours recorded.";
             case CHRONICLE ->
-                "No tales recorded yet.";
+                "No completed quests.";
             case RACES ->
                 "No race information available.";
         };
 
         String sub = switch (tab) {
             case JOURNAL ->
-                "New adventures will be written here.";
+                "Accepted quests appear here.";
             case RUMOURS ->
-                "Whispers and leads you discover will appear here.";
+                "Talk to people to hear what is happening.";
             case CHRONICLE ->
-                "Resolved adventures will become part of your story.";
+                "Finished quests are kept here.";
             case RACES ->
                 "Install CyberRaces to read the field guide.";
         };
@@ -815,7 +815,7 @@ public final class QuestJournalScreen extends Screen {
 
         drawCenteredWrapped(
             graphics,
-            "Choose a recorded thread to read its details.",
+            "Select an entry to read more.",
             layout.rightPageX(),
             layout.pageTop() + 72,
             layout.rightPageWidth(),
