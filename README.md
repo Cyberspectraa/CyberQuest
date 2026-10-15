@@ -1,8 +1,17 @@
 # CyberQuest
 
-**Current version: 0.3.0-alpha.12** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
+**Current version: 0.3.0-alpha.13** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
 
 CyberQuest is the data-driven quest and Adventurer's Guild framework for CyberSpectra Season 2. It owns **quest definitions, player progress, journal/tracking, NPC quest binding, generated guild contracts, guild reputation and ranks**. It does **not** own the world's story-act/region/boss state—that belongs to the optional [CyberServer](https://github.com/Cyberspectraa/CyberServer) mod.
+
+## Updated Dwarf and Catfolk race guide (0.3.0-alpha.13)
+
+Updated the Adventurer's Journal Races tab to reflect CyberRaces
+0.3.2-alpha.61: Dwarves use innate Fortune II-style resource mining
+rather than randomly enchanting crafted equipment. Catfolk use
+Figura-inspired ears and a four-segment tail. The rest of the journal
+and quest systems are unchanged. Update CyberQuest client and server
+together with CyberRaces if you want the journal descriptions to match.
 
 ## Base-race guide ability update (0.3.0-alpha.12)
 
