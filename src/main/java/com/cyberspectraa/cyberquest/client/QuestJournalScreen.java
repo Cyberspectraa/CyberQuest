@@ -17,7 +17,11 @@ import java.util.Locale;
 
 public final class QuestJournalScreen extends Screen {
     private JournalTab tab = JournalTab.JOURNAL;
-    private static final int RACES_PER_PAGE = 5;
+    private static final int MAX_RACES_PER_PAGE = 5;
+    private static final int RACE_ROW_TOP = 27;
+    private static final int RACE_ROW_HEIGHT = 25;
+    private static final int RACE_ROW_STEP = 27;
+    private static final int RACE_FOOTER_GAP = 24;
     private int selected;
     private int racePage;
 
@@ -257,37 +261,43 @@ public final class QuestJournalScreen extends Screen {
             drawEmptyPage(graphics, layout);
             return;
         }
-        int pages = (races.size() + RACES_PER_PAGE - 1) / RACES_PER_PAGE;
+        int rowsPerPage = raceRowsPerPage(layout);
+        int pages = (races.size() + rowsPerPage - 1) / rowsPerPage;
         racePage = Math.max(0, Math.min(racePage, pages - 1));
-        selected = Math.max(0, Math.min(selected, races.size() - 1));
-        int first = racePage * RACES_PER_PAGE;
+        int first = racePage * rowsPerPage;
+        // If the GUI scale changes, keep the selection on its visible page.
+        selected = Math.max(first, Math.min(selected,
+                Math.min(first + rowsPerPage, races.size()) - 1));
 
         graphics.drawString(font, Component.literal("Races"),
                 layout.leftPageX(), layout.pageTop(), GuiTheme.WAX, false);
         graphics.fill(layout.leftPageX(), layout.pageTop() + 11,
                 layout.leftPageRight(), layout.pageTop() + 12, 0x665D4228);
 
-        int y = layout.pageTop() + 27;
-        for (int i = first; i < Math.min(first + RACES_PER_PAGE, races.size()); i++) {
+        int y = layout.pageTop() + RACE_ROW_TOP;
+        for (int i = first; i < Math.min(first + rowsPerPage, races.size()); i++) {
             RaceJournalData.Entry race = races.get(i);
             GuiTheme.entry(graphics, layout.leftPageX(), y,
-                    layout.leftPageWidth(), 25, i == selected);
+                    layout.leftPageWidth(), RACE_ROW_HEIGHT, i == selected);
             graphics.drawString(font, Component.literal(
                     trimToWidth(race.name(), layout.leftPageWidth() - 18)),
                     layout.leftPageX() + 7, y + 3, GuiTheme.INK, false);
             graphics.drawString(font, Component.literal(race.status()),
                     layout.leftPageX() + 7, y + 13, GuiTheme.INK_MUTED, false);
-            y += 27;
+            y += RACE_ROW_STEP;
         }
 
         int controlsY = layout.pageBottom() - 16;
+        // Keep the footer separate from the list on scaled-down books.
+        graphics.fill(layout.leftPageX(), controlsY - 5,
+                layout.leftPageRight(), controlsY - 4, 0x665D4228);
         if (racePage > 0) {
             graphics.drawString(font, Component.literal("< Prev"),
                     layout.leftPageX(), controlsY, GuiTheme.WAX, false);
         }
-        graphics.drawString(font, Component.literal(
-                (racePage + 1) + " / " + pages),
-                layout.leftPageX() + layout.leftPageWidth() / 2 - 12,
+        String pageLabel = (racePage + 1) + " / " + pages;
+        graphics.drawString(font, Component.literal(pageLabel),
+                layout.leftPageX() + (layout.leftPageWidth() - font.width(pageLabel)) / 2,
                 controlsY, GuiTheme.INK_MUTED, false);
         if (racePage + 1 < pages) {
             graphics.drawString(font, Component.literal("Next >"),
@@ -328,37 +338,51 @@ public final class QuestJournalScreen extends Screen {
         List<RaceJournalData.Entry> races = RaceJournalData.entries();
         if (races.isEmpty()) return true;
 
-        int pages = (races.size() + RACES_PER_PAGE - 1) / RACES_PER_PAGE;
+        int rowsPerPage = raceRowsPerPage(layout);
+        int pages = (races.size() + rowsPerPage - 1) / rowsPerPage;
         int bottomY = layout.pageBottom() - 20;
         if (y >= bottomY && y < layout.pageBottom()) {
             if (x >= layout.leftPageX()
                     && x <= layout.leftPageX() + 42 && racePage > 0) {
                 racePage--;
-                selected = racePage * RACES_PER_PAGE;
+                selected = racePage * rowsPerPage;
                 playPageTurn(0.95F);
                 return true;
             }
             if (x >= layout.leftPageRight() - 44
                     && x <= layout.leftPageRight() && racePage + 1 < pages) {
                 racePage++;
-                selected = racePage * RACES_PER_PAGE;
+                selected = racePage * rowsPerPage;
                 playPageTurn(1.05F);
                 return true;
             }
         }
 
-        int rowY = layout.pageTop() + 27;
-        int first = racePage * RACES_PER_PAGE;
-        for (int i = first; i < Math.min(first + RACES_PER_PAGE, races.size()); i++) {
+        int rowY = layout.pageTop() + RACE_ROW_TOP;
+        int first = racePage * rowsPerPage;
+        for (int i = first; i < Math.min(first + rowsPerPage, races.size()); i++) {
             if (x >= layout.leftPageX() && x < layout.leftPageRight()
-                    && y >= rowY && y < rowY + 25) {
+                    && y >= rowY && y < rowY + RACE_ROW_HEIGHT) {
                 selected = i;
                 playPageTurn(1.0F);
                 return true;
             }
-            rowY += 27;
+            rowY += RACE_ROW_STEP;
         }
         return true;
+    }
+
+    /**
+     * A scaled book loses vertical space, but text and entry backgrounds
+     * still use fixed pixel heights. Only show rows that fit above the
+     * pagination footer; drawing and clicking share this same page size.
+     */
+    private int raceRowsPerPage(Layout layout) {
+        int usableHeight = layout.pageBottom() - RACE_FOOTER_GAP
+                - (layout.pageTop() + RACE_ROW_TOP);
+        int extraRows = Math.max(0, usableHeight - RACE_ROW_HEIGHT)
+                / RACE_ROW_STEP;
+        return Math.max(1, Math.min(MAX_RACES_PER_PAGE, 1 + extraRows));
     }
 
     private void drawTabs(
