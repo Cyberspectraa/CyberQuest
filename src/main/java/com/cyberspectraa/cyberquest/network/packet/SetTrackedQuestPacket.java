@@ -2,6 +2,7 @@ package com.cyberspectraa.cyberquest.network.packet;
 
 import com.cyberspectraa.cyberquest.network.QuestNetwork;
 import com.cyberspectraa.cyberquest.player.PlayerQuestData;
+import com.cyberspectraa.cyberquest.quest.GuildRegistrationMainQuest;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,10 +48,9 @@ public record SetTrackedQuestPacket(
                         packet.questId()
                     );
 
-            PlayerQuestData.setTrackedQuest(
-                player,
-                questId
-            );
+            if (!GuildRegistrationMainQuest.handleTracking(player, questId)) {
+                PlayerQuestData.setTrackedQuest(player, questId);
+            }
             QuestNetwork.syncJournal(player, false);
         }
 

@@ -15,6 +15,7 @@ import com.cyberspectraa.cyberquest.network.packet.SetTrackedQuestPacket;
 import com.cyberspectraa.cyberquest.player.PlayerQuestData;
 import com.cyberspectraa.cyberquest.quest.QuestDefinition;
 import com.cyberspectraa.cyberquest.quest.QuestManager;
+import com.cyberspectraa.cyberquest.quest.GuildRegistrationMainQuest;
 import com.cyberspectraa.cyberquest.quest.QuestRegistry;
 import com.cyberspectraa.cyberquest.quest.QuestResolver;
 import net.minecraft.core.BlockPos;
@@ -223,6 +224,12 @@ public final class QuestNetwork {
         ServerPlayer player
     ) {
         List<JournalEntry> result = new ArrayList<>();
+
+        // The island's first Main Quest sits before ordinary contracts.
+        // Its state is driven by the actual class registration save data.
+        JournalEntry onboarding = GuildRegistrationMainQuest.entry(player);
+        if (onboarding != null) result.add(onboarding);
+
 
         for (ResourceLocation questId
                 : PlayerQuestData.activeIds(player)) {
