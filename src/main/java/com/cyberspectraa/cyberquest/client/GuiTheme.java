@@ -130,8 +130,42 @@ public final class GuiTheme {
     public static void hud(
         GuiGraphics graphics, int x, int y, int width, int height
     ) {
-        graphics.blit(QUEST_HUD, x, y, width, height,
-            0.0F, 0.0F, 210, 52, 210, 52);
+        // Nine-slice the parchment so taller quest text does not stretch
+        // decorative borders/corners into giant, blurry shapes.
+        final int edge = 9;
+        final int textureWidth = 210;
+        final int textureHeight = 52;
+        int middleWidth = width - edge * 2;
+        int middleHeight = height - edge * 2;
+
+        graphics.blit(QUEST_HUD, x, y, edge, edge,
+                0.0F, 0.0F, edge, edge, textureWidth, textureHeight);
+        graphics.blit(QUEST_HUD, x + edge, y, middleWidth, edge,
+                edge, 0.0F, textureWidth - edge * 2, edge,
+                textureWidth, textureHeight);
+        graphics.blit(QUEST_HUD, x + width - edge, y, edge, edge,
+                textureWidth - edge, 0.0F, edge, edge,
+                textureWidth, textureHeight);
+
+        graphics.blit(QUEST_HUD, x, y + edge, edge, middleHeight,
+                0.0F, edge, edge, textureHeight - edge * 2,
+                textureWidth, textureHeight);
+        graphics.blit(QUEST_HUD, x + edge, y + edge, middleWidth, middleHeight,
+                edge, edge, textureWidth - edge * 2, textureHeight - edge * 2,
+                textureWidth, textureHeight);
+        graphics.blit(QUEST_HUD, x + width - edge, y + edge, edge, middleHeight,
+                textureWidth - edge, edge, edge, textureHeight - edge * 2,
+                textureWidth, textureHeight);
+
+        graphics.blit(QUEST_HUD, x, y + height - edge, edge, edge,
+                0.0F, textureHeight - edge, edge, edge,
+                textureWidth, textureHeight);
+        graphics.blit(QUEST_HUD, x + edge, y + height - edge, middleWidth, edge,
+                edge, textureHeight - edge, textureWidth - edge * 2, edge,
+                textureWidth, textureHeight);
+        graphics.blit(QUEST_HUD, x + width - edge, y + height - edge, edge, edge,
+                textureWidth - edge, textureHeight - edge, edge, edge,
+                textureWidth, textureHeight);
     }
 
     public static void entry(
