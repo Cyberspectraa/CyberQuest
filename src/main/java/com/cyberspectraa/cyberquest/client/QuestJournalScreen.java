@@ -498,36 +498,34 @@ public final class QuestJournalScreen extends Screen {
                 false
             );
 
-            String title =
-                trimToWidth(
-                    entry.title(),
-                    layout.leftPageWidth() - 34
-                );
-
-            graphics.drawString(
-                font,
-                Component.literal(title),
-                layout.leftPageX() + 18,
-                y + 3,
-                GuiTheme.INK,
-                false
-            );
-
-            graphics.drawString(
-                font,
-                Component.literal(
-                    entry.tracked()
-                        ? "tracked"
-                        : statusText(entry)
-                ),
-                layout.leftPageX() + 18,
-                y + 13,
-                GuiTheme.INK_MUTED,
-                false
-            );
+            // Text is smaller than the fixed-height parchment entry frame.
+            // Both lines are individually clipped to its usable width.
+            int textX = layout.leftPageX() + 18;
+            int textWidth = layout.leftPageWidth() - 28;
+            drawScaledEntryLine(graphics, entry.title(),
+                    textX, y + 4, textWidth, 0.86F, GuiTheme.INK);
+            drawScaledEntryLine(graphics,
+                    entry.tracked() ? "tracked" : statusText(entry),
+                    textX, y + 14, textWidth, 0.78F, GuiTheme.INK_MUTED);
 
             y += rowHeight;
         }
+    }
+
+    /**
+     * Keep both journal-list lines inside their 25px parchment frame.
+     * Scale around the line's top-left rather than the whole book, so mouse
+     * hitboxes and Minecraft's pixel-art border stay unchanged.
+     */
+    private void drawScaledEntryLine(GuiGraphics graphics, String value,
+                                     int x, int y, int width, float scale, int color) {
+        if (width <= 0) return;
+        String fitted = trimToWidth(value, Math.max(8, (int) (width / scale)));
+        graphics.pose().pushPose();
+        graphics.pose().translate(x, y, 0);
+        graphics.pose().scale(scale, scale, 1.0F);
+        graphics.drawString(font, Component.literal(fitted), 0, 0, color, false);
+        graphics.pose().popPose();
     }
 
     private void drawEntryDetails(

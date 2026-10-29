@@ -10,12 +10,12 @@
   ],
   "stages": [
     {
-      "id": "curse",
-      "title": "The Island's Changes",
-      "lead": "Ask the Pope why the island's people are different.",
+      "id": "island_whispers",
+      "title": "Island Mysteries",
+      "lead": "Ask the Pope about the island's changes and the dangers of the north, in either order.",
       "notes": [
-        "People were once human; the change doesn't erase their memories.",
-        "The cause is still unknown."
+        "The inhabitants were once human, but the cause of their changes is unknown.",
+        "The Shipbreaker is a danger to avoid, not an early target."
       ],
       "objectives": [
         {
@@ -23,17 +23,7 @@
           "type": "discover",
           "target": "cybernpc:pope_curse",
           "description": "Ask the Pope about the island's curse."
-        }
-      ]
-    },
-    {
-      "id": "north",
-      "title": "The Northern Warning",
-      "lead": "Ask about the wrecks in the frozen north.",
-      "notes": [
-        "The Shipbreaker is a warning, not an early-game target."
-      ],
-      "objectives": [
+        },
         {
           "id": "hear_pope_north",
           "type": "discover",

@@ -8,11 +8,13 @@
   "prerequisites": [],
   "stages": [
     {
-      "id": "begin",
-      "title": "The Church",
-      "lead": "Ask the Pope where a newcomer should start.",
+      "id": "town_getting_bearings",
+      "title": "Around Town",
+      "lead": "Ask the Pope where newcomers should begin and how the town's trade works.",
       "notes": [
-        "The Pope witnessed your summoning, but did not cause it."
+        "The Pope witnessed your summoning but did not cause it.",
+        "Town merchants use coins, not emeralds.",
+        "You can ask either question first."
       ],
       "objectives": [
         {
@@ -20,18 +22,7 @@
           "type": "discover",
           "target": "cybernpc:pope_begin",
           "description": "Ask the Pope where to begin."
-        }
-      ]
-    },
-    {
-      "id": "trade",
-      "title": "Making a Living",
-      "lead": "Ask the Pope how trading works in town.",
-      "notes": [
-        "The town uses coins rather than emeralds.",
-        "Contracts and trade can help pay for supplies."
-      ],
-      "objectives": [
+        },
         {
           "id": "hear_pope_trade",
           "type": "discover",
