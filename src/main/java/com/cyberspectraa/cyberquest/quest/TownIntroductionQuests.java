@@ -36,6 +36,8 @@ public final class TownIntroductionQuests {
                 || !player.getPersistentData().getCompound("CyberIntro")
                         .getBoolean("Completed")) return;
 
+        // A conversation immediately after the intro should not miss quest startup.
+        update(player);
         switch (action) {
             case "pope_begin", "pope_trade", "pope_curse",
                     "pope_north", "guild_info" -> {
