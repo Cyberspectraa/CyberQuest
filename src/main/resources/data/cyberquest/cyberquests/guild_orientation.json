@@ -1,0 +1,31 @@
+{
+  "title": "How the Guild Works",
+  "description": "Learn how to find, register and complete paid guild contracts.",
+  "category": "main",
+  "journal_section": "journal",
+  "completion_text": "The receptionist explained how to register notices, track contracts and collect payment.",
+  "auto_turn_in": true,
+  "prerequisites": [
+    "cyberquest:island_whispers"
+  ],
+  "stages": [
+    {
+      "id": "contracts",
+      "title": "The Reception Desk",
+      "lead": "Find the Guild Receptionist and ask about contracts.",
+      "notes": [
+        "Take a notice from the guild board and hold it to register.",
+        "Track objectives in your journal and return for payment.",
+        "Registering a class, with optional starter gear, is a separate first quest."
+      ],
+      "objectives": [
+        {
+          "id": "hear_guild_info",
+          "type": "discover",
+          "target": "cybernpc:guild_info",
+          "description": "Ask the Guild Receptionist about guild contracts."
+        }
+      ]
+    }
+  ]
+}

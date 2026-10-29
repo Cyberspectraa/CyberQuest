@@ -1,0 +1,44 @@
+{
+  "title": "Getting Your Bearings",
+  "description": "Learn how to begin life in town.",
+  "category": "main",
+  "journal_section": "journal",
+  "completion_text": "The Adventurers' Guild offers training and contracts, and the town uses coins instead of emeralds.",
+  "auto_turn_in": true,
+  "prerequisites": [],
+  "stages": [
+    {
+      "id": "begin",
+      "title": "The Church",
+      "lead": "Ask the Pope where a newcomer should start.",
+      "notes": [
+        "The Pope witnessed your summoning, but did not cause it."
+      ],
+      "objectives": [
+        {
+          "id": "hear_pope_begin",
+          "type": "discover",
+          "target": "cybernpc:pope_begin",
+          "description": "Ask the Pope where to begin."
+        }
+      ]
+    },
+    {
+      "id": "trade",
+      "title": "Making a Living",
+      "lead": "Ask the Pope how trading works in town.",
+      "notes": [
+        "The town uses coins rather than emeralds.",
+        "Contracts and trade can help pay for supplies."
+      ],
+      "objectives": [
+        {
+          "id": "hear_pope_trade",
+          "type": "discover",
+          "target": "cybernpc:pope_trade",
+          "description": "Ask the Pope about coins and trading."
+        }
+      ]
+    }
+  ]
+}

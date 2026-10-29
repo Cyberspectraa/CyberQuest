@@ -1,0 +1,46 @@
+{
+  "title": "An Island of Changed Faces",
+  "description": "Learn what the Pope knows about the changed inhabitants and the dangerous north.",
+  "category": "main",
+  "journal_section": "journal",
+  "completion_text": "The island changes people for unknown reasons. Beyond the northern ice, the Shipbreaker haunts wrecked ships.",
+  "auto_turn_in": true,
+  "prerequisites": [
+    "cyberquest:town_getting_bearings"
+  ],
+  "stages": [
+    {
+      "id": "curse",
+      "title": "The Island's Changes",
+      "lead": "Ask the Pope why the island's people are different.",
+      "notes": [
+        "People were once human; the change doesn't erase their memories.",
+        "The cause is still unknown."
+      ],
+      "objectives": [
+        {
+          "id": "hear_pope_curse",
+          "type": "discover",
+          "target": "cybernpc:pope_curse",
+          "description": "Ask the Pope about the island's curse."
+        }
+      ]
+    },
+    {
+      "id": "north",
+      "title": "The Northern Warning",
+      "lead": "Ask about the wrecks in the frozen north.",
+      "notes": [
+        "The Shipbreaker is a warning, not an early-game target."
+      ],
+      "objectives": [
+        {
+          "id": "hear_pope_north",
+          "type": "discover",
+          "target": "cybernpc:pope_north",
+          "description": "Ask the Pope about the frozen north."
+        }
+      ]
+    }
+  ]
+}

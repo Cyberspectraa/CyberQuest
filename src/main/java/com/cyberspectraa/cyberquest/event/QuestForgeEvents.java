@@ -7,6 +7,7 @@ import com.cyberspectraa.cyberquest.quest.QuestManager;
 import com.cyberspectraa.cyberquest.quest.QuestNpcInteraction;
 import com.cyberspectraa.cyberquest.quest.QuestRegistry;
 import com.cyberspectraa.cyberquest.quest.GuildRegistrationMainQuest;
+import com.cyberspectraa.cyberquest.quest.TownIntroductionQuests;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -44,6 +45,7 @@ public final class QuestForgeEvents {
 
         PlayerQuestData.ensure(player);
         GuildRegistrationMainQuest.update(player);
+        TownIntroductionQuests.update(player);
         QuestManager.checkExpired(player);
         QuestManager.refreshDynamicObjectives(player);
         QuestNetwork.syncJournal(player, false);
@@ -109,6 +111,7 @@ public final class QuestForgeEvents {
         }
 
         GuildRegistrationMainQuest.update(player);
+        TownIntroductionQuests.update(player);
         QuestManager.checkExpired(player);
         QuestManager.refreshDynamicObjectives(player);
     }
