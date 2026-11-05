@@ -71,6 +71,7 @@ public record QuestObjectiveDefinition(
         return switch (type) {
             case KILL -> "Defeat " + count + " " + target;
             case COLLECT -> "Collect " + count + " " + target;
+            case CRAFT -> "Craft " + count + " " + target;
             case TALK -> "Talk to " + target;
             case DELIVER_ITEM ->
                 "Deliver " + count + " " + target
