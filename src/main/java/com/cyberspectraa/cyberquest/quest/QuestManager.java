@@ -458,6 +458,16 @@ public final class QuestManager {
         }
     }
 
+    /** Tracks actual crafting events, rather than inventory possession. */
+    public static void recordCraft(ServerPlayer player, ItemStack crafted) {
+        if (player == null || crafted == null || crafted.isEmpty()) return;
+        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(crafted.getItem());
+        if (itemId != null) {
+            progressMatching(player, QuestObjectiveType.CRAFT,
+                    itemId.toString(), crafted.getCount());
+        }
+    }
+
     public static void recordTalk(
         ServerPlayer player,
         String npcId

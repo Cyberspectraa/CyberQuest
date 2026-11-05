@@ -9,6 +9,9 @@ import com.cyberspectraa.cyberquest.quest.QuestRegistry;
 import com.cyberspectraa.cyberquest.quest.GuildRegistrationMainQuest;
 import com.cyberspectraa.cyberquest.quest.TownIntroductionQuests;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.InteractionHand;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
@@ -97,6 +100,27 @@ public final class QuestForgeEvents {
             player,
             event.getAdvancement().getId()
         );
+    }
+
+    /**
+     * White Yarn can be crafted only while the player's Katie quest is active.
+     * Keep item permission and progress server authoritative.
+     */
+    @SubscribeEvent
+    public static void onCrafted(PlayerEvent.ItemCraftedEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)
+                || event.getCrafting().isEmpty()) return;
+        ResourceLocation id = ForgeRegistries.ITEMS.getKey(event.getCrafting().getItem());
+        if (new ResourceLocation("cybernpc", "yarn").equals(id)) {
+            ResourceLocation quest = new ResourceLocation("cyberquest", "katie_yarn");
+            if (!PlayerQuestData.isActive(player, quest)) {
+                event.getCrafting().setCount(0);
+                player.sendSystemMessage(Component.literal(
+                        "White Yarn is only craftable during Katie's quest."));
+                return;
+            }
+        }
+        QuestManager.recordCraft(player, event.getCrafting());
     }
 
     @SubscribeEvent

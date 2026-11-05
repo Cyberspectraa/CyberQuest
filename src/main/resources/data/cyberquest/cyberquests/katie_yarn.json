@@ -1,0 +1,23 @@
+{
+  "title": "A Little Yarn",
+  "description": "Katie asked you to craft a full stack of white yarn for her crocheting.",
+  "category": "side",
+  "journal_section": "journal",
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "make_yarn",
+      "title": "Katie's Yarn",
+      "lead": "Craft 64 White Yarn from String, then return to Katie.",
+      "objectives": [
+        {
+          "id": "craft_yarn",
+          "type": "craft",
+          "target": "cybernpc:yarn",
+          "count": 64,
+          "description": "Craft White Yarn (64)."
+        }
+      ]
+    }
+  ]
+}

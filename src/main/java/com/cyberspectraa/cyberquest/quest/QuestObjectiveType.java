@@ -5,6 +5,7 @@ import java.util.Locale;
 public enum QuestObjectiveType {
     KILL,
     COLLECT,
+    CRAFT,
     TALK,
     DELIVER_ITEM,
     VISIT,
