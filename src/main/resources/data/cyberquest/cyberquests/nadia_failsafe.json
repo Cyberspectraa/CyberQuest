@@ -1,0 +1,38 @@
+{
+  "title": "The Last Failsafe",
+  "description": "Nadia has designed a simple backup circuit in case a critical town mechanism fails.",
+  "category": "side",
+  "journal_section": "journal",
+  "completion_text": "Nadia admits that asking someone to help does not make her work any less reliable.",
+  "repeatable": false,
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "nadia_failsafe",
+      "title": "The Last Failsafe",
+      "lead": "Craft redstone repeaters and review Nadia's backup plan.",
+      "notes": [
+        "A personal request from Nadia. The quest is only offered through their friendship dialogue."
+      ],
+      "objectives": [
+        {
+          "id": "make_repeaters",
+          "type": "craft",
+          "target": "minecraft:repeater",
+          "count": 2,
+          "description": "Craft two redstone repeaters."
+        },
+        {
+          "id": "test_plan",
+          "type": "discover",
+          "target": "cybernpc:secret_nadia_research",
+          "description": "Discuss how to test the failsafe with Nadia."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "vanilla_xp": 85,
+    "cyber_xp": 0
+  }
+}

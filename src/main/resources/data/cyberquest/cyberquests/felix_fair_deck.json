@@ -1,0 +1,38 @@
+{
+  "title": "A Fair Hand",
+  "description": "Felix wants to make a new deck of cards, but the request hides a more personal story.",
+  "category": "side",
+  "journal_section": "journal",
+  "completion_text": "Felix sets aside the performance and tells you the truth about why the game matters.",
+  "repeatable": false,
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "felix_fair_deck",
+      "title": "A Fair Hand",
+      "lead": "Make paper for a replacement deck, then ask Felix why the cards matter.",
+      "notes": [
+        "A personal request from Felix. The quest is only offered through their friendship dialogue."
+      ],
+      "objectives": [
+        {
+          "id": "make_cards",
+          "type": "craft",
+          "target": "minecraft:paper",
+          "count": 12,
+          "description": "Craft twelve paper."
+        },
+        {
+          "id": "honest_game",
+          "type": "discover",
+          "target": "cybernpc:secret_felix_research",
+          "description": "Speak honestly with Felix about his old card games."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "vanilla_xp": 75,
+    "cyber_xp": 0
+  }
+}

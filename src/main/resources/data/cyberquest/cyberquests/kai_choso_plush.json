@@ -1,0 +1,34 @@
+{
+  "title": "A Piece of Home",
+  "description": "Kai quietly admits that he'd like to recover a Choso plush from a world he remembers.",
+  "category": "side",
+  "journal_section": "journal",
+  "completion_text": "Kai has something that reminds him of his old world. He trusts you with that part of his past.",
+  "repeatable": false,
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "kai_choso_plush",
+      "title": "A Piece of Home",
+      "lead": "Find the Choso plush and show it to Kai while holding it.",
+      "notes": [
+        "A personal request from Kai. The quest is only offered through their friendship dialogue."
+      ],
+      "objectives": [
+        {
+          "id": "recover_plush",
+          "type": "deliver_item",
+          "target": "cybernpc:choso_plush",
+          "npc": "mason",
+          "count": 1,
+          "consume": false,
+          "description": "Show Kai the Choso plush (hold it while speaking to him)."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "vanilla_xp": 75,
+    "cyber_xp": 0
+  }
+}

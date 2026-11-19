@@ -1,0 +1,38 @@
+{
+  "title": "A Table for Strangers",
+  "description": "Rowan wants enough simple food prepared for the next people stranded by the fracture.",
+  "category": "side",
+  "journal_section": "journal",
+  "completion_text": "Rowan sees that this town has another person willing to look after newcomers.",
+  "repeatable": false,
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "rowan_welcome_meal",
+      "title": "A Table for Strangers",
+      "lead": "Craft bread for a welcome meal, then ask Rowan who it is for.",
+      "notes": [
+        "A personal request from Rowan. The quest is only offered through their friendship dialogue."
+      ],
+      "objectives": [
+        {
+          "id": "make_bread",
+          "type": "craft",
+          "target": "minecraft:bread",
+          "count": 8,
+          "description": "Craft eight bread."
+        },
+        {
+          "id": "offer_welcome",
+          "type": "discover",
+          "target": "cybernpc:secret_rowan_research",
+          "description": "Ask Rowan about welcoming newly arrived travellers."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "vanilla_xp": 70,
+    "cyber_xp": 0
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "title": "The Lost Route",
+  "description": "Elara wants to put a little-known trail onto a map so no newcomer disappears there.",
+  "category": "side",
+  "journal_section": "journal",
+  "completion_text": "Elara finally trusts someone else to help map the island's dangerous paths.",
+  "repeatable": false,
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "elara_lost_route",
+      "title": "The Lost Route",
+      "lead": "Craft a map, then compare notes with Elara.",
+      "notes": [
+        "A personal request from Elara. The quest is only offered through their friendship dialogue."
+      ],
+      "objectives": [
+        {
+          "id": "craft_map",
+          "type": "craft",
+          "target": "minecraft:map",
+          "count": 1,
+          "description": "Craft a map for Elara."
+        },
+        {
+          "id": "route_notes",
+          "type": "discover",
+          "target": "cybernpc:secret_elara_research",
+          "description": "Discuss what the map should mark with Elara."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "vanilla_xp": 75,
+    "cyber_xp": 0
+  }
+}

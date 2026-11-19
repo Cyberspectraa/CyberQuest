@@ -1,0 +1,38 @@
+{
+  "title": "A Sky Worth Remembering",
+  "description": "Orin wants to compare the night sky here with the one he remembers from another world.",
+  "category": "side",
+  "journal_section": "journal",
+  "completion_text": "Orin discovers that sharing an unanswered question with a friend can be enough.",
+  "repeatable": false,
+  "auto_turn_in": false,
+  "stages": [
+    {
+      "id": "orin_star_notes",
+      "title": "A Sky Worth Remembering",
+      "lead": "Craft a spyglass and compare sky observations with Orin.",
+      "notes": [
+        "A personal request from Orin. The quest is only offered through their friendship dialogue."
+      ],
+      "objectives": [
+        {
+          "id": "make_spyglass",
+          "type": "craft",
+          "target": "minecraft:spyglass",
+          "count": 1,
+          "description": "Craft a spyglass."
+        },
+        {
+          "id": "observe_sky",
+          "type": "discover",
+          "target": "cybernpc:secret_orin_research",
+          "description": "Discuss the stars and your shared uncertainty with Orin."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "vanilla_xp": 80,
+    "cyber_xp": 0
+  }
+}
