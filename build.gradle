@@ -47,17 +47,62 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-// Pixel textures are authored from embedded Minecraft 1.20.1 sprites. They
-// are generated before resource packaging for deterministic client assets.
-// Python/Pillow are build-time only; Minecraft does not need them installed.
-tasks.register('generateVanillaQuestTextures', Exec) {
-    workingDir project.projectDir
-    def python = System.getenv('PYTHON') ?:
-            (System.getProperty('os.name').toLowerCase().contains('windows') ? 'py' : 'python3')
-    commandLine python, 'tools/generate_vanilla_textures.py'
+// Pixel-art textures are deterministic outputs of tools/generate_vanilla_textures.py.
+// A checked-in/local prebuilt ZIP is preferred for ordinary Gradle builds:
+// it preserves the same pixels WITHOUT requiring Python/Pillow on every PC.
+// The Python generator remains an opt-in authoring tool or a fallback when
+// the archive is not installed. Never silently ship missing texture assets.
+def prebuiltQuestTextures = file('tools/prebuilt-quest-textures.zip')
+def questTextureGenerator = tasks.register('generateVanillaQuestTextures') {
+    group = 'cyberquest authoring'
+    description = 'Regenerate vanilla-style quest textures with Python and Pillow.'
+    outputs.dir(file('src/generated/resources/assets/cyberquest/textures'))
+    doLast {
+        def commands = []
+        def override = System.getenv('PYTHON')
+        if (override != null && !override.isBlank()) commands.add([override])
+        if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+            commands.add(['py', '-3'])
+            commands.add(['python'])
+        } else {
+            commands.add(['python3'])
+            commands.add(['python'])
+        }
+        List<String> selected = null
+        commands.each { cmd ->
+            if (selected == null) {
+                try {
+                    def probe = project.exec {
+                        commandLine(*(cmd + ['-c', 'from PIL import Image']))
+                        ignoreExitValue = true
+                        standardOutput = new java.io.ByteArrayOutputStream()
+                        errorOutput = new java.io.ByteArrayOutputStream()
+                    }
+                    if (probe.exitValue == 0) selected = cmd
+                } catch (Exception ignored) {
+                    // Try the next available Python launcher.
+                }
+            }
+        }
+        if (selected == null) {
+            throw new GradleException(
+                'CyberQuest needs its original pixel textures. Either copy the ' +
+                'prebuilt-quest-textures.zip into tools/, or install Python 3 ' +
+                'and Pillow (python -m pip install Pillow).')
+        }
+        project.exec {
+            commandLine(*(selected + ['tools/generate_vanilla_textures.py']))
+        }
+    }
 }
-tasks.named('processResources').configure {
-    dependsOn tasks.named('generateVanillaQuestTextures')
+tasks.named('processResources', ProcessResources).configure {
+    if (prebuiltQuestTextures.isFile()) {
+        // ZIP root contains assets/cyberquest/textures/... exactly as the JAR
+        // needs it; preserve the artist-approved PNG pixels without regenerating.
+        from(zipTree(prebuiltQuestTextures))
+    } else {
+        dependsOn questTextureGenerator
+    }
 }
 
 
