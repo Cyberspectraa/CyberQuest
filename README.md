@@ -1,8 +1,26 @@
 # CyberQuest
 
-**Current version: 0.3.0-alpha.13** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
+**Current development version: 0.3.0-alpha.22** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
 
 CyberQuest is the data-driven quest and Adventurer's Guild framework for CyberSpectra Season 2. It owns **quest definitions, player progress, journal/tracking, NPC quest binding, generated guild contracts, guild reputation and ranks**. It does **not** own the world's story-act/region/boss state—that belongs to the optional [CyberServer](https://github.com/Cyberspectraa/CyberServer) mod.
+
+## Current race field guide (0.3.0-alpha.22)
+
+The Adventurer's Journal now follows CyberRaces' **actual** race
+availability: **10 starting races** (Human, Elf, Orc, Tiefling, Nymph,
+Catfolk, Dogfolk, Foxfolk, Slime and Arachnid); **Goblin and Dwarf**
+are shown separately as **Wild NPC only**; and **Undead** is marked as
+an acquired condition. Dragonborn, Fairy and Birdfolk are retired, while
+Halfling and Aasimar aren't regular choices, so none of those are offered
+as starting races by the guide.
+
+Descriptions have been updated to avoid advertising disabled player
+abilities. No changes were made to quests, player progress, journal
+pagination or the race registry. See [the exact list and verification
+notes](docs/RACE_JOURNAL_CURRENT.md).
+
+Older race-guide changelog sections below are historical and superseded
+by the current availability list.
 
 ## Updated Dwarf and Catfolk race guide (0.3.0-alpha.13)
 
