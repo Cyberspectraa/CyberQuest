@@ -1,8 +1,21 @@
 # CyberQuest
 
-**Current development version: 0.3.0-alpha.22** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
+**Current development version: 0.3.0-alpha.23** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
 
 CyberQuest is the data-driven quest and Adventurer's Guild framework for CyberSpectra Season 2. It owns **quest definitions, player progress, journal/tracking, NPC quest binding, generated guild contracts, guild reputation and ranks**. It does **not** own the world's story-act/region/boss state—that belongs to the optional [CyberServer](https://github.com/Cyberspectraa/CyberServer) mod.
+
+## Python-free texture packaging (0.3.0-alpha.23)
+
+CyberQuest's previous local build failed on Windows when the `py` launcher
+was unavailable. The original 14 journal and guild-board textures can
+now be packaged from a lossless prebuilt ZIP placed locally at
+`tools/prebuilt-quest-textures.zip`, with no Python/Pillow installation.
+The original Python generator remains available as an optional authoring
+tool or fallback when the archive is missing.
+
+See [the complete installation instructions](docs/BUILD_WITHOUT_PYTHON.md).
+The prebuilt ZIP is supplied separately with the fix and must be copied
+to the tools folder before building without Python.
 
 ## Current race field guide (0.3.0-alpha.22)
 
