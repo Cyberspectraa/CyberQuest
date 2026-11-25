@@ -32,58 +32,26 @@ abilities. No changes were made to quests, player progress, journal
 pagination or the race registry. See [the exact list and verification
 notes](docs/RACE_JOURNAL_CURRENT.md).
 
-Older race-guide changelog sections below are historical and superseded
-by the current availability list.
+The parchment journal (J by default) includes paginated race entries and wraps tracked quest objectives to fit the HUD. The field guide is optional when CyberRaces is absent.
 
-## Updated Dwarf and Catfolk race guide (0.3.0-alpha.13)
+## Newcomer and personal quests
 
-Updated the Adventurer's Journal Races tab to reflect CyberRaces
-0.3.2-alpha.61: Dwarves use innate Fortune II-style resource mining
-rather than randomly enchanting crafted equipment. Catfolk use
-Figura-inspired ears and a four-segment tail. The rest of the journal
-and quest systems are unchanged. Update CyberQuest client and server
-together with CyberRaces if you want the journal descriptions to match.
+- **Your First Steps** guides new players from the Pope's introduction to guild class registration, completing automatically after class selection. Starter equipment is optional; no physical town-exit gate is imposed.
+- Town and island introduction quests support order-independent dialogue objectives, so players need not repeat a conversation choice just because they selected it early.
+- **Main Seven personal quests:** Kai, Katie, Elara, Rowan, Felix, Nadia and Orin offer quests through CyberNpc friendship dialogue at Trust 2 and Affection 1. Katie's original 64-Yarn quest is preserved. Kai's existing Choso Plush must be placed in the world by the series owner and is not consumed on hand-in.
+- Crafting objectives track eligible crafts after quest acceptance; the journal and quest HUD reflect the actual progress.
 
-## Base-race guide ability update (0.3.0-alpha.12)
-
-The Races page in the Adventurer's Journal now describes the finalized
-Goblin **Treasure Instinct**, Dogfolk **Hunter's Nose**, and Tiefling
-**Infernal Surge** actions, including temporary duration and their effects.
-These replace earlier under-review descriptions without changing quest
-logic, journal controls, world saves, or the existing parchment style.
-The updated text describes CyberRaces 0.3.2-alpha.53. Update
-CyberQuest on both client and server; CyberRaces 0.3.2-alpha.53 is
-required to make the three actions available as documented.
-
-## Races reference tab (0.3.0-alpha.11)
-
-The parchment Adventurer's Journal includes a fourth **Races** tab.
-It shows the 15 CyberRaces starting races plus **Undead**, which is now
-an acquired Zombification condition. Each entry explains the race's
-identity, advantages, active ability and trade-offs. Five entries appear
-on each journal page; Prev/Next paginate the left leaf, while selecting
-a race displays its details on the right leaf. The layout uses existing
-CyberQuest journal textures and makes no new network or save data.
-
-The tab reads a lightweight local field guide and appears when
-CyberRaces is installed. CyberQuest still works without CyberRaces:
-the tab then displays an installation hint rather than failing to
-load. Race guide copy was initially aligned to CyberRaces **0.3.2-alpha.52**;
-existing users should install that CyberRaces version before relying
-on the guide's Slime, Arachnid and crafting descriptions.
-
-Only replace CyberQuest.jar on client/server for this journal UI update.
-Its quests, contracts, quest progress and tracking controls are intact.
+See [guild registration](docs/GUILD_REGISTRATION_MAIN_QUEST.md) and [Main Seven quests](docs/MAIN_SEVEN_SECRET_QUESTS.md).
 
 ## Quest system
 
 - Datapack-loaded quest JSON under `data/<namespace>/cyberquests/*.json`; example: `src/main/resources/data/cyberquest/cyberquests/first_hunt.json`.
 - Persistent **per-player** quest state, with progression across defined stages.
-- Objective types: `kill`, `collect`, `talk`, `deliver_item`, `visit`, `advancement` and `discover`.
+- Objective types: `kill`, `collect`, `talk`, `deliver_item`, `visit`, `advancement`, `discover` and `craft`.
 - Quest prerequisites, Cyber Level requirements, race/evolution/class/advancement requirements and, when CyberServer is installed, story-act/flag/region gates.
 - Repeatable and non-repeatable quests, manual or automatic turn-in, optional time limits, completion text and failure penalties.
 - Event-driven progress for relevant objectives, with a limited once-per-second refresh for objectives such as inventory counts and location checks.
-- Rewards: **Cyber XP**, vanilla XP, items, guild reputation and symbolic class unlock IDs.
+- Rewards: **Cyber XP**, vanilla XP, items, guild reputation and symbolic class unlock IDs. CyberRaces alpha.76 gates Cyber XP until class registration when CyberClasses is installed.
 - GUI quest journal (**J** by default), tracked quest selection, progress sync and a quest HUD overlay.
 
 The journal is a player feature; quest creation and administrative state changes are controlled by server-side logic.
@@ -155,6 +123,8 @@ Those keys are **fields within a complete quest definition**, not a complete sta
 
 ## Player and admin commands
 
+With CyberNpc 0.45.9+, use the shared `/cyber quest` prefix and `/cyber help quest`. The original `/cyberquest` commands below remain available and retain the same permissions.
+
 ```mcfunction
 /cyberquest journal
 /cyberquest status
@@ -184,3 +154,18 @@ Administrative commands (permission level 2):
 - **Data content:** the engine and generated Guild contracts are implemented. A long, bespoke main campaign, rank-specific quest arcs and many class-ability rewards still require authored content and gameplay validation.
 
 Keep world-specific story JSON and policy in CyberServer or datapacks instead of hardcoding them into the reusable CyberQuest engine.
+
+## Local Windows build
+
+Install matching CyberQuest JARs on client and server. From the CyberMods directory, clone the development branch if needed: `git clone --branch development-no-actions https://github.com/Cyberspectraa/CyberQuest.git`.
+
+```powershell
+cd "$HOME\CyberMods\CyberQuest"
+git switch development-no-actions
+git pull --ff-only
+.\build-local.bat
+```
+
+For a Python-free build, the separately supplied prebuilt texture ZIP must already be saved as `tools/prebuilt-quest-textures.zip`; see [build without Python](docs/BUILD_WITHOUT_PYTHON.md). Without it, the original generator needs Python and Pillow. Do not put the archive into Minecraft's resourcepacks folder. No GitHub Actions or main-branch changes.
+
+[Historical README](https://github.com/Cyberspectraa/CyberQuest/blob/e2660f5e2129cdf8abeea052f15e3048d6913dce/README.md). Current companion builds: CyberNpc 0.45.9, CyberRaces 0.3.2-alpha.76, CyberClasses 0.2.1-alpha.13 and CyberServer 0.2.7. Local build and gameplay verification remain necessary.
