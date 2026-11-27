@@ -784,8 +784,6 @@ public final class QuestJournalScreen extends Screen {
         String message = switch (tab) {
             case JOURNAL ->
                 "No active threads.";
-            case RUMOURS ->
-                "No rumours recorded.";
             case CHRONICLE ->
                 "No completed quests.";
             case RACES ->
@@ -795,8 +793,6 @@ public final class QuestJournalScreen extends Screen {
         String sub = switch (tab) {
             case JOURNAL ->
                 "Accepted quests appear here.";
-            case RUMOURS ->
-                "Talk to people to hear what is happening.";
             case CHRONICLE ->
                 "Finished quests are kept here.";
             case RACES ->
@@ -1131,10 +1127,6 @@ public final class QuestJournalScreen extends Screen {
             "Journal",
             "Active Threads"
         ),
-        RUMOURS(
-            "Rumours",
-            "Whispers & Leads"
-        ),
         CHRONICLE(
             "Chronicle",
             "Resolved Tales"
@@ -1160,19 +1152,8 @@ public final class QuestJournalScreen extends Screen {
         ) {
             return switch (this) {
                 case JOURNAL ->
-                    "journal".equals(
-                        entry.section()
-                    )
-                    && !"COMPLETED".equals(
-                        entry.status()
-                    );
-                case RUMOURS ->
-                    "rumour".equals(
-                        entry.section()
-                    )
-                    && !"COMPLETED".equals(
-                        entry.status()
-                    );
+                    !"COMPLETED".equals(entry.status())
+                    && !"chronicle".equals(entry.section());
                 case CHRONICLE ->
                     "COMPLETED".equals(
                         entry.status()
