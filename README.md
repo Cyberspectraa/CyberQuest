@@ -1,6 +1,6 @@
 # CyberQuest
 
-**Current development version: 0.3.0-alpha.23** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
+**Current development version: 0.3.0-alpha.24** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
 
 CyberQuest is the data-driven quest and Adventurer's Guild framework for CyberSpectra Season 2. It owns **quest definitions, player progress, journal/tracking, NPC quest binding, generated guild contracts, guild reputation and ranks**. It does **not** own the world's story-act/region/boss state—that belongs to the optional [CyberServer](https://github.com/Cyberspectraa/CyberServer) mod.
 
@@ -33,6 +33,10 @@ pagination or the race registry. See [the exact list and verification
 notes](docs/RACE_JOURNAL_CURRENT.md).
 
 The parchment journal (J by default) includes paginated race entries and wraps tracked quest objectives to fit the HUD. The field guide is optional when CyberRaces is absent.
+
+## Main Seven personal quest finish (0.3.0-alpha.24)
+
+Paired with CyberNpc **0.45.10**, all seven journal entries now match the revised personal dialogue. The existing objective IDs, counts, rewards and quest IDs remain unchanged. The new scoped item delivery API allows Kai's personal hand-in to show the plush without accidentally delivering it to the older Mason quest. The other five discussion quests retain order-independent crafting and dialogue progress; Katie's original 64-Yarn task is preserved. No NPC automatically departs. See [CyberNpc's final personal quest guide](https://github.com/Cyberspectraa/CyberNpc/blob/development-no-actions/docs/MAIN_SEVEN_PERSONAL_QUESTS.md).
 
 ## Newcomer and personal quests
 
@@ -168,4 +172,4 @@ git pull --ff-only
 
 For a Python-free build, the separately supplied prebuilt texture ZIP must already be saved as `tools/prebuilt-quest-textures.zip`; see [build without Python](docs/BUILD_WITHOUT_PYTHON.md). Without it, the original generator needs Python and Pillow. Do not put the archive into Minecraft's resourcepacks folder. No GitHub Actions or main-branch changes.
 
-[Historical README](https://github.com/Cyberspectraa/CyberQuest/blob/e2660f5e2129cdf8abeea052f15e3048d6913dce/README.md). Current companion builds: CyberNpc 0.45.9, CyberRaces 0.3.2-alpha.76, CyberClasses 0.2.1-alpha.13 and CyberServer 0.2.7. Local build and gameplay verification remain necessary.
+[Historical README](https://github.com/Cyberspectraa/CyberQuest/blob/e2660f5e2129cdf8abeea052f15e3048d6913dce/README.md). Current companion builds: CyberNpc 0.45.10, CyberRaces 0.3.2-alpha.76, CyberClasses 0.2.1-alpha.13 and CyberServer 0.2.7. Local build and gameplay verification remain necessary.
