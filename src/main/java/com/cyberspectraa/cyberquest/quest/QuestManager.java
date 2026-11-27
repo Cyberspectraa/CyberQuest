@@ -506,6 +506,24 @@ public final class QuestManager {
         ServerPlayer player,
         String npcId
     ) {
+        return deliverItems(player, npcId, null);
+    }
+
+    /** Explicit personal dialogue hand-in: never deliver to unrelated quests. */
+    public static boolean tryDeliverItemsForQuest(
+        ServerPlayer player,
+        String npcId,
+        ResourceLocation questId
+    ) {
+        if (questId == null) return false;
+        return deliverItems(player, npcId, questId);
+    }
+
+    private static boolean deliverItems(
+        ServerPlayer player,
+        String npcId,
+        ResourceLocation onlyQuest
+    ) {
         if (player == null
                 || npcId == null
                 || npcId.isBlank()) {
@@ -537,6 +555,7 @@ public final class QuestManager {
                         player
                     )
                 )) {
+            if (onlyQuest != null && !onlyQuest.equals(questId)) continue;
             QuestDefinition quest =
                 QuestResolver.get(
                     player,
