@@ -1,18 +1,19 @@
 {
   "title": "A Table for Strangers",
-  "description": "Rowan wants enough simple food prepared for the next people stranded by the fracture.",
+  "description": "Rowan remembers feeling unwelcome on arrival and wants the next stranger to have a gentler beginning.",
   "category": "side",
   "journal_section": "journal",
-  "completion_text": "Rowan sees that this town has another person willing to look after newcomers.",
+  "completion_text": "Rowan knows someone else is willing to welcome strangers without demanding explanations.",
   "repeatable": false,
   "auto_turn_in": false,
   "stages": [
     {
       "id": "rowan_welcome_meal",
       "title": "A Table for Strangers",
-      "lead": "Craft bread for a welcome meal, then ask Rowan who it is for.",
+      "lead": "Craft eight bread and discuss what newcomers need with Rowan. Return after both objectives.",
       "notes": [
-        "A personal request from Rowan. The quest is only offered through their friendship dialogue."
+        "Personal quest offered through the corresponding character's friendship dialogue.",
+        "Return to that character after completing the listed objectives."
       ],
       "objectives": [
         {
@@ -26,7 +27,7 @@
           "id": "offer_welcome",
           "type": "discover",
           "target": "cybernpc:secret_rowan_research",
-          "description": "Ask Rowan about welcoming newly arrived travellers."
+          "description": "Discuss how to welcome frightened newcomers."
         }
       ]
     }
