@@ -1,6 +1,6 @@
 {
   "title": "A Little Yarn",
-  "description": "Katie asked you to craft a full stack of white yarn for her crocheting.",
+  "description": "Katie wants to finish a crochet project of her own. Craft a full stack of White Yarn from String.",
   "category": "side",
   "journal_section": "journal",
   "auto_turn_in": false,
@@ -8,14 +8,14 @@
     {
       "id": "make_yarn",
       "title": "Katie's Yarn",
-      "lead": "Craft 64 White Yarn from String, then return to Katie.",
+      "lead": "After accepting, craft 64 White Yarn, then return to Katie and report your progress.",
       "objectives": [
         {
           "id": "craft_yarn",
           "type": "craft",
           "target": "cybernpc:yarn",
           "count": 64,
-          "description": "Craft White Yarn (64)."
+          "description": "Craft 64 White Yarn after accepting the quest."
         }
       ]
     }
