@@ -24,10 +24,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.stream.Collectors;
 
-@Mod.EventBusSubscriber(
-    modid = CyberQuest.MOD_ID,
-    bus = Mod.EventBusSubscriber.Bus.FORGE
-)
 public final class QuestCommands {
     private static final SuggestionProvider<CommandSourceStack>
         QUEST_SUGGESTIONS =
@@ -42,7 +38,6 @@ public final class QuestCommands {
     private QuestCommands() {
     }
 
-    @SubscribeEvent
     public static void onRegister(
         RegisterCommandsEvent event
     ) {

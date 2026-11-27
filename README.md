@@ -1,6 +1,6 @@
 # CyberQuest
 
-**Current development version: 0.3.0-alpha.25** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
+**Current development version: 0.3.0-alpha.26** · Minecraft **1.20.1** · Forge **47.4.10** · Java **17**
 
 CyberQuest is the data-driven quest and Adventurer's Guild framework for CyberSpectra Season 2. It owns **quest definitions, player progress, journal/tracking, NPC quest binding, generated guild contracts, guild reputation and ranks**. It does **not** own the world's story-act/region/boss state—that belongs to the optional [CyberServer](https://github.com/Cyberspectraa/CyberServer) mod.
 
@@ -129,29 +129,10 @@ When CyberServer is installed, quests may also include gates such as:
 
 Those keys are **fields within a complete quest definition**, not a complete standalone quest JSON. CyberServer's quest reward multiplier affects Cyber XP and vanilla XP; item rewards remain unchanged.
 
-## Player and admin commands
+## Commands
 
-With CyberNpc 0.45.9+, use the shared `/cyber quest` prefix and `/cyber help quest`. The original `/cyberquest` commands below remain available and retain the same permissions.
-
-```mcfunction
-/cyberquest journal
-/cyberquest status
-```
-
-Administrative commands (permission level 2):
-
-```mcfunction
-/cyberquest admin start <player> <quest>
-/cyberquest admin complete <player> <quest>
-/cyberquest admin reset <player> <quest>
-/cyberquest admin resetall <player>
-/cyberquest npc id <entity> <id>
-/cyberquest npc bind <entity> <quest>
-/cyberquest npc unbind <entity> <quest>
-/cyberquest npc inspect <entity>
-```
-
-**Important:** the old top-level `/cyberquest start`, `complete`, `reset` and `resetall` commands moved under `/cyberquest admin` in the current version. NPC binding remains under `/cyberquest npc`.
+This mod no longer registers its own commands. Open the journal with J and use the existing guild/NPC interactions.
+Operators use the retained `/cadmin` commands provided by the companion mods. No saved character or quest data was removed.
 
 ## Architecture, compatibility and limits
 
