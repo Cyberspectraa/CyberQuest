@@ -1,18 +1,19 @@
 {
   "title": "A Sky Worth Remembering",
-  "description": "Orin wants to compare the night sky here with the one he remembers from another world.",
+  "description": "Orin wants to record the unfamiliar sky without mistaking memory for evidence.",
   "category": "side",
   "journal_section": "journal",
-  "completion_text": "Orin discovers that sharing an unanswered question with a friend can be enough.",
+  "completion_text": "Orin can share the unanswered question with a friend without inventing a conclusion.",
   "repeatable": false,
   "auto_turn_in": false,
   "stages": [
     {
       "id": "orin_star_notes",
       "title": "A Sky Worth Remembering",
-      "lead": "Craft a spyglass and compare sky observations with Orin.",
+      "lead": "Craft a spyglass and discuss how to compare observations with Orin. No particular location or time is required.",
       "notes": [
-        "A personal request from Orin. The quest is only offered through their friendship dialogue."
+        "Personal quest offered through the corresponding character's friendship dialogue.",
+        "Return to that character after completing the listed objectives."
       ],
       "objectives": [
         {
@@ -26,7 +27,7 @@
           "id": "observe_sky",
           "type": "discover",
           "target": "cybernpc:secret_orin_research",
-          "description": "Discuss the stars and your shared uncertainty with Orin."
+          "description": "Discuss memories and observations with Orin."
         }
       ]
     }
