@@ -1,18 +1,19 @@
 {
   "title": "A Fair Hand",
-  "description": "Felix wants to make a new deck of cards, but the request hides a more personal story.",
+  "description": "Felix misses playing cards with friends, without having to perform for them.",
   "category": "side",
   "journal_section": "journal",
-  "completion_text": "Felix sets aside the performance and tells you the truth about why the game matters.",
+  "completion_text": "Felix trusts you enough to set aside the performance and enjoy the company.",
   "repeatable": false,
   "auto_turn_in": false,
   "stages": [
     {
       "id": "felix_fair_deck",
       "title": "A Fair Hand",
-      "lead": "Make paper for a replacement deck, then ask Felix why the cards matter.",
+      "lead": "Craft twelve paper and ask Felix why his old card deck matters. Return after both objectives.",
       "notes": [
-        "A personal request from Felix. The quest is only offered through their friendship dialogue."
+        "Personal quest offered through the corresponding character's friendship dialogue.",
+        "Return to that character after completing the listed objectives."
       ],
       "objectives": [
         {
@@ -26,7 +27,7 @@
           "id": "honest_game",
           "type": "discover",
           "target": "cybernpc:secret_felix_research",
-          "description": "Speak honestly with Felix about his old card games."
+          "description": "Hear why the old deck matters and respond to Felix."
         }
       ]
     }
